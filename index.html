@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeStudy</title>
+    
+    <link rel="icon" href="Duskball.png" type="image/png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <style>
+        /* --- GENERAL STYLES --- */
+        body, html { margin: 0; padding: 0; font-family: Arial, sans-serif; height: 100%; background-color: #000; overflow: hidden; }
+        
+        .main-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; opacity: 0; visibility: hidden; transition: opacity 0.6s, visibility 0.6s; z-index: 1; }
+        .active-view { opacity: 1; visibility: visible; z-index: 10; }
+
+        /* Adjusted padding-bottom to account for larger divider */
+        .top-content { min-height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; padding-bottom: 180px; }
+
+        /* --- BACKGROUNDS --- */
+        .hero-bg { 
+            background-color: #cc0000; 
+            color: white; 
+        }
+
+        /* Settings Page & End Page Background (Dark Gray + Yellow Stripes) */
+        .page-1-bg { 
+            background-color: #2b2b2b; 
+            background-image: linear-gradient(90deg, 
+                transparent 25%, 
+                #f1c40f 25%, 
+                #f1c40f 37.5%, 
+                transparent 37.5%, 
+                transparent 62.5%, 
+                #f1c40f 62.5%, 
+                #f1c40f 75%, 
+                transparent 75%
+            );
+            background-size: 100% calc(100% - 112.5px); /* Stops exactly at the divider rectangle */
+            background-repeat: no-repeat;
+            color: white; 
+        }
+
+        /* Masterball Purple */
+        .page-2-bg { background-color: #582A70; color: white; }
+        
+        /* Great Ball Blue */
+        .page-log-bg { background-color: #2B6F9C; color: white; }
+        
+        .game-bg { background-size: cover; background-position: center; background-attachment: fixed; color: white; transition: background-image 1s ease-in-out; }
+        
+        .hero-bg::before, .game-bg::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.1); z-index: 0; }
+        .hero-inner { z-index: 1; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 25px; padding-bottom: 100px; }
+
+        .hero-title { font-size: 4rem; margin: 0; text-shadow: 2px 2px 4px #000; }
+        .hero-subtitle { font-size: 1.2rem; max-width: 800px; margin: 0; text-shadow: 1px 1px 2px #000; color: #f0f0f0; line-height: 1.8; }
+
+        /* --- BUTTONS --- */
+        .button-container { display: flex; gap: 20px; justify-content: center; align-items: center; }
+        .btn-layered { background-color: #404040; border: none; border-radius: 50px; padding: 6px; cursor: pointer; transition: transform 0.2s; display: inline-block; text-decoration: none; }
+        .btn-layered span { display: block; background-color: white; color: #333; font-size: 1.2rem; font-weight: bold; padding: 12px 35px; border-radius: 44px; }
+        .btn-layered:hover { transform: scale(1.05); }
+
+        .btn-layered-small { background-color: #404040; border: none; border-radius: 50px; padding: 4px; cursor: pointer; transition: transform 0.2s; margin: 0 5px; }
+        .btn-layered-small span { display: block; background-color: white; color: #333; font-size: 0.9rem; font-weight: bold; padding: 8px 20px; border-radius: 44px; }
+        .btn-layered-small:hover { transform: scale(1.05); }
+
+        /* FLOATING ACTION BUTTONS */
+        .btn-float-back { position: absolute; top: 40px; left: 40px; font-size: 1.2rem; color: rgba(255, 255, 255, 0.8); background: none; border: none; cursor: pointer; font-weight: bold; transition: transform 0.2s, color 0.2s; z-index: 30; }
+        .btn-float-back:hover { transform: scale(1.1); color: white; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+        .btn-float-pause { position: absolute; top: 80px; left: 40px; font-size: 1.2rem; color: #f1c40f; background: none; border: none; cursor: pointer; font-weight: bold; transition: transform 0.2s, color 0.2s; z-index: 30; }
+        .btn-float-pause:hover { transform: scale(1.1); color: #fff; }
+
+        .btn-float-end { position: absolute; top: 120px; left: 40px; font-size: 1.2rem; color: #e74c3c; background: none; border: none; cursor: pointer; font-weight: bold; transition: transform 0.2s, color 0.2s; z-index: 30; }
+        .btn-float-end:hover { transform: scale(1.1); color: #fff; }
+
+        /* --- CLOCK & TIMER --- */
+        .clock-container { position: absolute; bottom: 190px; left: 50%; transform: translateX(-50%); font-size: 3rem; font-family: 'Courier New', Courier, monospace; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); z-index: 6; }
+        .timer-group { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .timer-wrapper { display: flex; align-items: center; gap: 15px; background: rgba(0, 0, 0, 0.6); padding: 15px 30px; border-radius: 50px; font-family: 'Courier New', Courier, monospace; }
+        .timer-display { font-size: 2.5rem; font-weight: bold; min-width: 200px; text-align: center; }
+        .timer-btn { background: none; border: 2px solid rgba(255,255,255,0.3); color: white; font-size: 1.5rem; font-weight: bold; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
+        .timer-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* --- CHECKLIST & SLIDER --- */
+        .checklist-wrapper { background: rgba(0, 0, 0, 0.3); padding: 20px 40px; border-radius: 15px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .checklist-controls { display: flex; justify-content: center; width: 100%; gap: 10px; }
+        .checklist-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 40px; text-align: left; }
+        .checklist-item { font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+        .checklist-item input { transform: scale(1.5); cursor: pointer; }
+
+        .shiny-slider-wrapper { position: absolute; top: 40px; right: 40px; background: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; color: white; z-index: 20; text-align: right; border: 1px solid rgba(255,255,255,0.2); }
+        .shiny-slider-wrapper label { font-size: 1.1rem; font-weight: bold; color: #f1c40f; }
+        .shiny-slider-wrapper input[type=range] { width: 200px; cursor: pointer; }
+
+        /* --- GAME PAGE --- */
+        .game-countdown { position: absolute; top: 40px; right: 40px; font-family: 'Courier New', Courier, monospace; font-size: 2.5rem; font-weight: bold; color: white; text-shadow: 0 0 10px rgba(255,0,0,0.7); z-index: 20; }
+        
+        .catch-rate-display {
+            position: absolute; top: 90px; right: 40px;
+            font-family: 'Courier New', Courier, monospace; font-size: 1.2rem; font-weight: bold; 
+            color: #2ecc71; text-shadow: 1px 1px 2px #000; z-index: 20;
+        }
+
+        .battle-ring { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(90px + 20vh + 10px); width: 33.33vw; height: auto; z-index: 10; image-rendering: pixelated; }
+        .pokemon-display { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(90px + 20vh + 50px); display: flex; justify-content: center; align-items: flex-end; z-index: 20; pointer-events: none; }
+        .pokemon-gif { transform: scale(5); transform-origin: bottom center; image-rendering: pixelated; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
+
+        .game-textbox-container { 
+            position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); 
+            width: 80%; height: 20vh; z-index: 20; 
+            background-color: white; border: 8px solid black; border-radius: 8px; 
+            display: flex; align-items: center; justify-content: flex-start; 
+            padding: 20px 50px; box-sizing: border-box; 
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.5); 
+        }
+
+        .textbox-triangle {
+            position: absolute;
+            bottom: 15px; right: 20px; 
+            width: 0; height: 0; 
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 15px solid #e74c3c; 
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .game-text { 
+            font-family: 'Press Start 2P', 'Courier New', monospace; 
+            font-size: 2.4rem; line-height: 1.4; color: black; 
+            text-align: left; width: 100%; white-space: pre-wrap; margin: 0; 
+        }
+
+        .roll-info-container {
+            position: absolute; left: 60%; top: 40%;
+            display: flex; flex-direction: column; gap: 10px;
+            text-align: left; z-index: 25;
+            font-family: 'Press Start 2P', cursive; font-size: 0.8rem;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .roll-text { opacity: 0; transition: opacity 0.5s; }
+
+        /* --- SIDEBAR (Right - Balls) --- */
+        .sidebar-container { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 110px; height: 50vh; z-index: 30; }
+        .sidebar-outer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #c0392b; clip-path: polygon(0% 10%, 100% 0%, 100% 100%, 0% 90%); z-index: 1; }
+        .sidebar-inner { 
+            position: absolute; top: 5px; bottom: 5px; right: 0; left: 5px; 
+            background-color: #e74c3c; clip-path: polygon(0% 10%, 100% 0%, 100% 100%, 0% 90%); 
+            z-index: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            gap: 4px; padding-left: 10px; 
+        }
+        .poke-icon { width: 80px; height: auto; z-index: 3; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.4)); opacity: 0.6; transition: opacity 0.3s; }
+        .poke-icon.active { opacity: 1; } 
+        .selector-ring {
+            position: absolute; width: 70px; height: 70px; 
+            background-color: #2ecc71; border-radius: 50%;
+            z-index: 1; box-shadow: 0 0 10px #2ecc71;
+            display: none; pointer-events: none;
+        }
+
+        /* --- SIDEBAR (Left - Caught List) --- */
+        .caught-sidebar {
+            position: absolute;
+            left: 0; 
+            top: 37.5%; transform: translateY(-50%);
+            width: 15vw; height: 37.5vh;
+            background-color: white; border: 5px solid gray;
+            overflow-y: auto; z-index: 25;
+            padding: 15px; box-sizing: border-box;
+            
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem; 
+            color: black;
+            text-align: left;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .caught-sidebar::-webkit-scrollbar { width: 8px; }
+        .caught-sidebar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .caught-sidebar::-webkit-scrollbar-thumb { background: #888; }
+
+        /* --- DECORATION (TRIPLED SIZE) --- */
+        .decoration-wrapper { 
+            position: absolute; bottom: 0; left: 0; width: 100%; 
+            height: 180px; /* 60 * 3 */
+            z-index: 5; 
+            background: linear-gradient(to bottom, transparent 50%, #ffffff 50%); 
+        }
+        .geo-rectangle { 
+            position: absolute; width: 100%; 
+            height: 45px; /* 15 * 3 */
+            background-color: #404040; z-index: 1; 
+            top: 50%; left: 0; transform: translateY(-50%);
+        }
+        .geo-circle-outer { 
+            position: absolute; 
+            width: 135px; height: 135px; /* 45 * 3 */
+            border-radius: 50%; background-color: #404040; z-index: 2; 
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        .geo-circle-inner { 
+            position: absolute; 
+            width: 90px; height: 90px; /* 30 * 3 */
+            border-radius: 50%; background-color: #fff; z-index: 3; 
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        .common-section-two { padding: 80px 20px; background-color: #fff; color: #333; text-align: center; display: flex; justify-content: center; align-items: center; min-height: 40vh; }
+        .info-box { max-width: 700px; }
+        .info-box h2 { font-size: 2.5rem; margin-bottom: 20px; }
+        .info-box p { font-size: 1.1rem; line-height: 1.6; color: #666; }
+
+    </style>
+</head>
+<body>
+
+    <div id="view-home" class="main-view active-view">
+        <div class="top-content hero-bg" id="home-hero-bg">
+            <div class="hero-inner">
+                <h1 class="hero-title">Welcome to PokeStudy</h1>
+                <p class="hero-subtitle">
+                    Click Start to begin<br>
+                    Click My Collection to view your Pokemon Collection<br>
+                    Click Update Log to view changes made to this website
+                </p>
+                <div class="button-container">
+                    <button class="btn-layered" onclick="switchView('view-external-2')"><span>My Collection</span></button>
+                    <button class="btn-layered" onclick="switchView('view-external-1')"><span>START</span></button>
+                    <button class="btn-layered" onclick="switchView('view-update-log')"><span>Update Log</span></button>
+                </div>
+            </div>
+            <div class="clock-container" id="clock1">00:00:00</div>
+            <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
+        </div>
+        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+    </div>
+
+    <div id="view-external-1" class="main-view">
+        <div class="top-content page-1-bg">
+            <button class="btn-float-back" onclick="switchView('view-home')">Return Home</button>
+            <div class="shiny-slider-wrapper">
+                <label>Shiny Chance: 1 in <span id="shinyValueDisplay">4096</span></label>
+                <input type="range" id="shinySlider" min="1" max="4096" value="1" oninput="updateShinySlider(this.value)">
+            </div>
+            <div class="hero-inner">
+                <h1 class="hero-title">Session Settings</h1>
+                <div class="checklist-wrapper">
+                    <div class="checklist-controls">
+                        <button class="btn-layered-small" onclick="toggleCheckboxes(true)"><span>Select All</span></button>
+                        <button class="btn-layered-small" onclick="toggleCheckboxes(false)"><span>Deselect All</span></button>
+                    </div>
+                    <div class="checklist-container">
+                        <label class="checklist-item"><input type="checkbox"> Generation I</label>
+                        <label class="checklist-item"><input type="checkbox"> Generation II</label>
+                        <label class="checklist-item"><input type="checkbox"> Generation III</label>
+                        <label class="checklist-item"><input type="checkbox"> Generation IV</label>
+                        <label class="checklist-item"><input type="checkbox"> Generation V</label>
+                        <label class="checklist-item"><input type="checkbox"> Generation VI</label>
+                        <label class="checklist-item"><input type="checkbox"> Generation VII</label>
+                        <label class="checklist-item"><input type="checkbox"> Generation VIII</label>
+                    </div>
+                </div>
+                <div class="timer-group">
+                    <div class="timer-wrapper">
+                        <button class="timer-btn" onclick="adjustTimer(-60)">&lt;&lt;</button>
+                        <button class="timer-btn" onclick="adjustTimer(-10)">&lt;</button>
+                        <div class="timer-display" id="customTimer">00:00:00</div>
+                        <button class="timer-btn" onclick="adjustTimer(10)">&gt;</button>
+                        <button class="timer-btn" onclick="adjustTimer(60)">&gt;&gt;</button>
+                    </div>
+                    <button class="btn-layered-small" onclick="resetTimer()"><span>Reset Timer</span></button>
+                </div>
+                <button class="btn-layered" onclick="startGameTransition()" style="margin-top: 30px;"><span>BEGIN</span></button>
+            </div>
+            <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
+        </div>
+        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+    </div>
+
+    <div id="view-external-2" class="main-view">
+        <div class="top-content page-2-bg">
+            <button class="btn-float-back" onclick="switchView('view-home')">Return Home</button>
+            <div class="hero-inner"><h1>My Collection (WIP)</h1><p class="hero-subtitle">View your progress here.</p></div>
+            <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
+        </div>
+        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+    </div>
+
+    <div id="view-update-log" class="main-view">
+        <div class="top-content page-log-bg">
+            <button class="btn-float-back" onclick="switchView('view-home')">Return Home</button>
+            <div class="hero-inner"><h1>Update Log</h1><p class="hero-subtitle">Version History and Changes.</p></div>
+            <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
+        </div>
+        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+    </div>
+
+    <div id="view-game" class="main-view">
+        <div class="top-content game-bg" id="game-bg-target">
+            <button class="btn-float-back" onclick="stopGameAndReturn()">Return Home</button>
+            <button class="btn-float-pause" id="btnPause" onclick="togglePause()">PAUSE</button>
+            <button class="btn-float-end" id="btnEnd" onclick="handleEndButton()">END SESSION</button>
+
+            <div class="game-countdown" id="gameTimerDisplay">00:00:00</div>
+            <div class="catch-rate-display" id="catchRateDisplay"></div>
+
+            <div class="roll-info-container">
+                <div id="hpRollText" class="roll-text"></div>
+                <div id="statusRollText" class="roll-text"></div>
+            </div>
+
+            <div class="sidebar-container">
+                <div class="sidebar-outer"></div>
+                <div class="sidebar-inner">
+                    <div class="selector-ring" id="ballSelector"></div>
+                    <img src="Pokeball.png" class="poke-icon" id="ball-0">
+                    <img src="Greatball.png" class="poke-icon" id="ball-1">
+                    <img src="Ultraball.png" class="poke-icon" id="ball-2">
+                    <img src="Masterball.png" class="poke-icon" id="ball-3">
+                </div>
+            </div>
+
+            <div class="caught-sidebar" id="caughtListContainer">
+                <div style="font-weight: bold; margin-bottom: 10px;">CAUGHT POKEMON:</div>
+                </div>
+
+            <div class="hero-inner">
+                <img src="Ring.png" class="battle-ring">
+                <div class="pokemon-display">
+                    <img id="pokemonSprite" class="pokemon-gif" src="" alt="" style="display: none;">
+                </div>
+            </div>
+
+            <div class="game-textbox-container">
+                <p id="gameTextBox" class="game-text"></p>
+                <div class="textbox-triangle"></div>
+            </div>
+            
+            <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
+        </div>
+        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+    </div>
+
+    <div id="view-end" class="main-view">
+        <div class="top-content page-1-bg"> 
+            <div class="hero-inner">
+                <h1 class="hero-title">Session Complete</h1>
+                <p class="hero-subtitle">Good job for locking in, Professor Oak is proud of you!</p>
+                <div class="button-container">
+                    <button class="btn-layered" onclick="switchView('view-home')"><span>Return Home</span></button>
+                </div>
+            </div>
+            <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
+        </div>
+        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+    </div>
+
+    <script>
+        // --- BASIC UTILS ---
+        function switchView(targetId) {
+            const currentView = document.querySelector('.active-view');
+            const targetView = document.getElementById(targetId);
+            if (currentView && targetView) {
+                currentView.classList.remove('active-view');
+                setTimeout(() => { targetView.classList.add('active-view'); targetView.scrollTop = 0; }, 50); 
+            }
+        }
+        function updateMainClock() {
+            const now = new Date();
+            let hours = now.getHours(), minutes = now.getMinutes(), seconds = now.getSeconds();
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            const clock = document.getElementById('clock1');
+            if(clock) clock.innerText = `${hours}:${minutes}:${seconds}`;
+            updateGameBackground(now.getHours());
+        }
+        setInterval(updateMainClock, 1000);
+
+        function updateGameBackground(h) {
+            const gameBg = document.getElementById('game-bg-target');
+            if(!gameBg) return;
+            if (h >= 8 && h < 18) gameBg.style.backgroundImage = "url('daybackground.jpg')";
+            else if ((h >= 6 && h < 8) || (h >= 18 && h < 20)) gameBg.style.backgroundImage = "url('settingbackground.jpg')";
+            else gameBg.style.backgroundImage = "url('nightbackground.jpg')";
+        }
+
+        // --- CONFIG ---
+        let configMinutes = 0; 
+        function adjustTimer(amount) { configMinutes += amount; if (configMinutes < 0) configMinutes = 0; updateConfigDisplay(); localStorage.setItem('mySavedTimer', configMinutes); }
+        function resetTimer() { configMinutes = 0; updateConfigDisplay(); localStorage.setItem('mySavedTimer', configMinutes); }
+        function updateConfigDisplay() {
+            const h = Math.floor(configMinutes / 60), m = configMinutes % 60;
+            const hStr = h < 10 ? '0' + h : h, mStr = m < 10 ? '0' + m : m;
+            document.getElementById('customTimer').innerText = `${hStr}:${mStr}:00`;
+        }
+
+        function setupChecklist() {
+            const boxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+            boxes.forEach((box, i) => {
+                box.checked = localStorage.getItem('gen_check_' + i) === 'true';
+                box.addEventListener('change', () => localStorage.setItem('gen_check_' + i, box.checked));
+            });
+        }
+        function toggleCheckboxes(val) {
+            const boxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+            boxes.forEach((box, i) => { box.checked = val; localStorage.setItem('gen_check_' + i, val); });
+        }
+
+        let shinyOdds = 4096;
+        function updateShinySlider(val) {
+            shinyOdds = 4097 - val;
+            document.getElementById('shinyValueDisplay').innerText = shinyOdds;
+            localStorage.setItem('shinyChance', shinyOdds);
+        }
+        function initShinySlider() {
+            const saved = localStorage.getItem('shinyChance');
+            if (saved) {
+                shinyOdds = parseInt(saved);
+                document.getElementById('shinySlider').value = 4097 - shinyOdds;
+                document.getElementById('shinyValueDisplay').innerText = shinyOdds;
+            }
+        }
+
+        // --- GAME VARIABLES ---
+        let gameInterval = null;
+        let gameSecondsRemaining = 0;
+        let isPaused = false;
+        let validPokemonIds = [];
+        let typewriterInterval = null; 
+        let caughtPokemonList = []; 
+
+        // Encounter Variables
+        let encounterSeconds = 0;
+        let currentFinalChance = 0;
+        let currentPokemonName = "";
+        let isShiny = false;
+        let transitionPending = false;
+        
+        // NEW: End Game State
+        let endConfirmState = false;
+        let endConfirmTimeout = null; // Variable to hold the timeout ID
+
+        const generationRanges = [
+            { start: 1, end: 151 }, { start: 152, end: 251 }, { start: 252, end: 386 },
+            { start: 387, end: 493 }, { start: 494, end: 649 }, { start: 650, end: 721 },
+            { start: 722, end: 809 }, { start: 810, end: 898 }
+        ];
+
+        function getValidIdPool() {
+            let pool = [];
+            for (let i = 0; i < 8; i++) {
+                if (localStorage.getItem('gen_check_' + i) === 'true') {
+                    for (let id = generationRanges[i].start; id <= generationRanges[i].end; id++) pool.push(id);
+                }
+            }
+            if (pool.length === 0) for (let id = 1; id <= 151; id++) pool.push(id);
+            return pool;
+        }
+
+        // --- CONTROL FUNCTIONS ---
+        function startGameTransition() {
+            validPokemonIds = getValidIdPool();
+            switchView('view-game');
+            gameSecondsRemaining = configMinutes * 60; 
+            isPaused = false;
+            
+            // Reset End Button
+            endConfirmState = false;
+            if(endConfirmTimeout) clearTimeout(endConfirmTimeout);
+            const endBtn = document.getElementById('btnEnd');
+            endBtn.innerText = "END SESSION";
+            endBtn.style.color = "#e74c3c";
+
+            document.getElementById('btnPause').innerText = "PAUSE";
+            document.getElementById('btnPause').style.color = "#f1c40f";
+            updateGameTimerDisplay();
+            
+            runGameCycle(); 
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(gameTick, 1000);
+        }
+
+        function stopGameAndReturn() {
+            clearInterval(gameInterval);
+            clearInterval(typewriterInterval); 
+            switchView('view-home');
+        }
+
+        // NEW: END GAME BUTTON LOGIC WITH TIMEOUT
+        function handleEndButton() {
+            const btn = document.getElementById('btnEnd');
+            if (!endConfirmState) {
+                // Change to confirmation state
+                btn.innerText = "CONFIRM END";
+                btn.style.color = "#c0392b"; 
+                endConfirmState = true;
+                
+                // Clear any existing timeout
+                if(endConfirmTimeout) clearTimeout(endConfirmTimeout);
+                
+                // Set timeout to revert after 3 seconds
+                endConfirmTimeout = setTimeout(() => {
+                    if (endConfirmState) { // Only revert if still in confirm state
+                        endConfirmState = false;
+                        btn.innerText = "END SESSION";
+                        btn.style.color = "#e74c3c";
+                    }
+                }, 3000);
+            } else {
+                goToEndPage();
+            }
+        }
+
+        function goToEndPage() {
+            clearInterval(gameInterval);
+            clearInterval(typewriterInterval); 
+            if(endConfirmTimeout) clearTimeout(endConfirmTimeout); // Cleanup
+            switchView('view-end');
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            const btn = document.getElementById('btnPause');
+            btn.innerText = isPaused ? "CONTINUE" : "PAUSE";
+            btn.style.color = isPaused ? "#2ecc71" : "#f1c40f";
+        }
+
+        // --- REVISED GAME TICK ---
+        function gameTick() {
+            if (isPaused) return;
+
+            // Global Timer
+            if (gameSecondsRemaining > 0) {
+                gameSecondsRemaining--; 
+                updateGameTimerDisplay();
+            } else {
+                // TIMER RAN OUT -> END PAGE
+                goToEndPage();
+                return;
+            }
+
+            if (transitionPending) {
+                runGameCycle();
+                transitionPending = false;
+                return;
+            }
+
+            encounterSeconds++;
+
+            if (encounterSeconds % 2 === 0) {
+                if (encounterSeconds >= 2 && encounterSeconds < 18) {
+                    let caught = Math.random() < currentFinalChance;
+                    let displayName = capitalize(currentPokemonName) + (isShiny ? " ★" : "");
+
+                    if (caught) {
+                        startTypewriter(`Gotcha! The wild ${displayName} was caught!`);
+                        transitionPending = true;
+                        
+                        addCaughtPokemon(displayName);
+                    } else {
+                        startTypewriter(`Oh no! The wild ${displayName} broke free!`);
+                    }
+                } 
+                else if (encounterSeconds === 18) {
+                    let displayName = capitalize(currentPokemonName) + (isShiny ? " ★" : "");
+                    startTypewriter(`Oh no! The wild ${displayName} fled!`);
+                    transitionPending = true;
+                }
+            }
+        }
+
+        function addCaughtPokemon(name) {
+            caughtPokemonList.push(name);
+            const container = document.getElementById('caughtListContainer');
+            const item = document.createElement('div');
+            
+            item.style.color = 'black'; 
+            if (name.includes('★')) {
+                item.innerHTML = name.replace('★', '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>');
+            } else {
+                item.innerText = name;
+            }
+            
+            container.appendChild(item);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateGameTimerDisplay() {
+            const h = Math.floor(gameSecondsRemaining / 3600), m = Math.floor((gameSecondsRemaining % 3600) / 60), s = gameSecondsRemaining % 60;
+            const hStr = h < 10 ? '0' + h : h, mStr = m < 10 ? '0' + m : m, sStr = s < 10 ? '0' + s : s;
+            document.getElementById('gameTimerDisplay').innerText = `${hStr}:${mStr}:${sStr}`;
+        }
+
+        function startTypewriter(text) {
+            const textBox = document.getElementById('gameTextBox');
+            textBox.innerHTML = ""; 
+            
+            const totalDuration = 1200;
+            const charDelay = Math.floor(totalDuration / text.length);
+            let i = 0;
+            
+            if (typewriterInterval) clearInterval(typewriterInterval);
+            
+            typewriterInterval = setInterval(() => {
+                const char = text.charAt(i);
+                
+                if (char === '★') {
+                    textBox.innerHTML += '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>';
+                } else {
+                    textBox.innerHTML += char;
+                }
+                
+                i++;
+                if (i >= text.length) clearInterval(typewriterInterval);
+            }, charDelay);
+        }
+
+        function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+        async function runGameCycle() {
+            encounterSeconds = 0;
+            transitionPending = false;
+
+            const imgElement = document.getElementById('pokemonSprite');
+            const textBox = document.getElementById('gameTextBox');
+            const hpText = document.getElementById('hpRollText');
+            const statusText = document.getElementById('statusRollText');
+            const catchDisplay = document.getElementById('catchRateDisplay');
+            const selector = document.getElementById('ballSelector');
+
+            imgElement.style.display = 'none';
+            textBox.innerHTML = "";
+            hpText.style.opacity = 0; statusText.style.opacity = 0;
+            catchDisplay.innerText = "";
+            selector.style.display = 'none';
+            document.querySelectorAll('.poke-icon').forEach(icon => icon.classList.remove('active'));
+
+            const randomIndex = Math.floor(Math.random() * validPokemonIds.length);
+            const randomId = validPokemonIds[randomIndex];
+
+            try {
+                const [pokemonRes, speciesRes] = await Promise.all([
+                    fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`),
+                    fetch(`https://pokeapi.co/api/v2/pokemon-species/${randomId}`)
+                ]);
+                const pokeData = await pokemonRes.json();
+                const speciesData = await speciesRes.json();
+
+                currentPokemonName = pokeData.name;
+                if (currentPokemonName.includes('mega-')) { runGameCycle(); return; }
+
+                const hpMax = pokeData.stats[0].base_stat; 
+                const catchRate = speciesData.capture_rate;
+
+                const shinyRoll = Math.floor(Math.random() * shinyOdds) + 1;
+                isShiny = (shinyRoll === 1);
+                const folder = isShiny ? 'ani-shiny' : 'ani';
+
+                imgElement.src = `https://play.pokemonshowdown.com/sprites/${folder}/${currentPokemonName}.gif`;
+                imgElement.style.display = 'block';
+
+                let hpCurrent, hpString, hpColor;
+                const rHp = Math.random();
+                if (rHp < 0.60) { hpCurrent = hpMax; hpString = "Full HP"; hpColor = "#2ecc71"; } 
+                else if (rHp < 0.90) { hpCurrent = hpMax / 2; hpString = "Half HP"; hpColor = "#f1c40f"; } 
+                else { hpCurrent = 1; hpString = "1 HP!"; hpColor = "#e74c3c"; } 
+
+                let bonusBall, ballIndex;
+                const rBall = Math.random();
+                if (rBall < 0.50) { bonusBall = 1.0; ballIndex = 0; } 
+                else if (rBall < 0.80) { bonusBall = 1.5; ballIndex = 1; } 
+                else if (rBall < 0.95) { bonusBall = 2.0; ballIndex = 2; } 
+                else { bonusBall = 255; ballIndex = 3; } 
+
+                let bonusStatus, statusString, statusColor;
+                const rStatus = Math.random();
+                if (rStatus < 0.50) { bonusStatus = 1; statusString = "No Status"; statusColor = "#ecf0f1"; }
+                else if (rStatus < 0.65) { bonusStatus = 1.5; statusString = "Paralyzed"; statusColor = "#f1c40f"; }
+                else if (rStatus < 0.80) { bonusStatus = 1.5; statusString = "Poisoned"; statusColor = "#9b59b6"; }
+                else if (rStatus < 0.95) { bonusStatus = 1.5; statusString = "Burned"; statusColor = "#e67e22"; }
+                else if (rStatus < 0.975) { bonusStatus = 2.5; statusString = "Frozen!"; statusColor = "#3498db"; }
+                else { bonusStatus = 2.5; statusString = "Asleep!"; statusColor = "#95a5a6"; }
+
+                hpText.innerText = hpString; hpText.style.color = hpColor; hpText.style.opacity = 1;
+                statusText.innerText = statusString; statusText.style.color = statusColor; statusText.style.opacity = 1;
+
+                const ballIcon = document.getElementById(`ball-${ballIndex}`);
+                if (ballIcon) {
+                    ballIcon.classList.add('active');
+                    selector.style.display = 'block';
+                    selector.style.top = (ballIcon.offsetTop + 6) + 'px'; 
+                }
+
+                const bonusLevel = 3; 
+                if (bonusBall === 255) {
+                    currentFinalChance = 1.0; 
+                } else {
+                    const a = ((3 * hpMax - 2 * hpCurrent) / (3 * hpMax)) * catchRate * bonusBall * bonusStatus * bonusLevel;
+                    if (a >= 255) currentFinalChance = 1.0;
+                    else currentFinalChance = Math.pow(a / 255, 3);
+                }
+
+                // UPDATED: Now displays 3 decimal places
+                catchDisplay.innerText = `Catch Chance: ${(currentFinalChance * 100).toFixed(3)}%`;
+
+                let displayName = capitalize(currentPokemonName) + (isShiny ? " ★" : "");
+                startTypewriter(`Wild ${displayName} appeared!`);
+
+            } catch (error) {
+                console.log("Error", error);
+                runGameCycle(); 
+            }
+        }
+        
+        document.getElementById('pokemonSprite').onerror = function() { this.style.display = 'none'; };
+
+        window.onload = function() {
+            if(localStorage.getItem('mySavedTimer')) { configMinutes = parseInt(localStorage.getItem('mySavedTimer')); updateConfigDisplay(); }
+            setupChecklist(); initShinySlider(); updateMainClock();
+        };
+    </script>
+</body>
+</html>
