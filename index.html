@@ -17,39 +17,31 @@
         .main-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; opacity: 0; visibility: hidden; transition: opacity 0.6s, visibility 0.6s; z-index: 1; }
         .active-view { opacity: 1; visibility: visible; z-index: 10; }
 
-        /* Adjusted padding-bottom to account for larger divider */
         .top-content { min-height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; padding-bottom: 180px; }
 
         /* --- BACKGROUNDS --- */
-        .hero-bg { 
-            background-color: #cc0000; 
-            color: white; 
-        }
+        .hero-bg { background-color: #cc0000; color: white; }
 
-        /* Settings Page & End Page Background (Dark Gray + Yellow Stripes) */
         .page-1-bg { 
             background-color: #2b2b2b; 
-            background-image: linear-gradient(90deg, 
-                transparent 25%, 
-                #f1c40f 25%, 
-                #f1c40f 37.5%, 
-                transparent 37.5%, 
-                transparent 62.5%, 
-                #f1c40f 62.5%, 
-                #f1c40f 75%, 
-                transparent 75%
-            );
-            background-size: 100% calc(100% - 112.5px); /* Stops exactly at the divider rectangle */
+            background-image: linear-gradient(90deg, transparent 25%, #f1c40f 25%, #f1c40f 37.5%, transparent 37.5%, transparent 62.5%, #f1c40f 62.5%, #f1c40f 75%, transparent 75%);
+            background-size: 100% calc(100% - 112.5px);
             background-repeat: no-repeat;
             color: white; 
         }
 
-        /* Masterball Purple */
         .page-2-bg { background-color: #582A70; color: white; }
         
-        /* Great Ball Blue */
-        .page-log-bg { background-color: #2B6F9C; color: white; }
-        
+        /* GREAT BALL THEME BACKGROUND */
+        .page-log-bg { 
+            background-color: #2B6F9C; /* Great Ball Blue */
+            /* Red strips: 0-33.3% and 66.6%-100% horizontally. */
+            background-image: linear-gradient(to right, #e74c3c 33.33%, transparent 33.33%, transparent 66.66%, #e74c3c 66.66%);
+            background-size: 100% 20%; /* 1/5th height */
+            background-position: center; /* Centered vertically (2/5 to 3/5) */
+            background-repeat: no-repeat;
+            color: white; 
+        }
         .game-bg { background-size: cover; background-position: center; background-attachment: fixed; color: white; transition: background-image 1s ease-in-out; }
         
         .hero-bg::before, .game-bg::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.1); z-index: 0; }
@@ -93,9 +85,102 @@
         .checklist-item { font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
         .checklist-item input { transform: scale(1.5); cursor: pointer; }
 
-        .shiny-slider-wrapper { position: absolute; top: 40px; right: 40px; background: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; color: white; z-index: 20; text-align: right; border: 1px solid rgba(255,255,255,0.2); }
+        .shiny-slider-wrapper { 
+            position: absolute; top: 40px; right: 40px; 
+            background: rgba(0, 0, 0, 0.6); padding: 20px; 
+            border-radius: 15px; display: flex; flex-direction: column; 
+            align-items: flex-end; gap: 10px; color: white; z-index: 20; 
+            text-align: right; border: 1px solid rgba(255,255,255,0.2); 
+        }
         .shiny-slider-wrapper label { font-size: 1.1rem; font-weight: bold; color: #f1c40f; }
         .shiny-slider-wrapper input[type=range] { width: 200px; cursor: pointer; }
+        .shiny-slider-wrapper input[type=range]:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .admin-input {
+            margin-top: 10px; padding: 5px; border-radius: 5px; 
+            border: 1px solid #ccc; font-family: Arial, sans-serif;
+            font-size: 0.8rem; width: 150px;
+        }
+
+        .speed-warning {
+            display: none; 
+            color: #e74c3c; 
+            font-size: 0.7rem; 
+            margin-top: 5px; 
+            max-width: 200px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        /* --- UPDATE LOG STYLE --- */
+        .version-header-container {
+            width: 75vw;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+        .version-title {
+            font-size: 3rem;
+            font-weight: bold;
+            font-style: italic;
+            color: black;
+            margin: 0;
+            text-shadow: none; 
+        }
+        .trapezoid-wrapper {
+            position: relative;
+            width: 100%;
+            height: 25px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+        .version-divider {
+            width: 100%;
+            height: 100%;
+            background-color: #404040;
+            clip-path: polygon(0 0, 100% 0, calc(100% - 25px) 100%, 0 100%);
+        }
+        .trapezoid-date {
+            position: absolute;
+            right: 30px; 
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            color: #ccc;
+            font-weight: bold;
+        }
+        
+        .log-scroll-area {
+            width: 80vw;
+            height: 50vh;
+            overflow-y: auto;
+            text-align: left;
+            padding-left: 12.5vw; 
+            box-sizing: border-box;
+        }
+        .log-scroll-area::-webkit-scrollbar { width: 8px; }
+        .log-scroll-area::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .log-scroll-area::-webkit-scrollbar-thumb { background: #888; }
+
+        .log-item {
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 12px;
+            text-shadow: 1px 1px 2px #000;
+            line-height: 1.4;
+            display: flex; /* Flex to align ball icon and text */
+            align-items: center;
+        }
+        .log-item img {
+            width: 3em; 
+            height: 3em;
+            margin-right: 15px;
+            image-rendering: pixelated;
+            flex-shrink: 0;
+        }
+        .log-item a { color: #f1c40f; text-decoration: underline; }
+        .log-item a:hover { color: white; }
 
         /* --- GAME PAGE --- */
         .game-countdown { position: absolute; top: 40px; right: 40px; font-family: 'Courier New', Courier, monospace; font-size: 2.5rem; font-weight: bold; color: white; text-shadow: 0 0 10px rgba(255,0,0,0.7); z-index: 20; }
@@ -107,8 +192,19 @@
         }
 
         .battle-ring { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(90px + 20vh + 10px); width: 33.33vw; height: auto; z-index: 10; image-rendering: pixelated; }
-        .pokemon-display { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(90px + 20vh + 50px); display: flex; justify-content: center; align-items: flex-end; z-index: 20; pointer-events: none; }
-        .pokemon-gif { transform: scale(5); transform-origin: bottom center; image-rendering: pixelated; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
+        
+        .pokemon-display { 
+            position: absolute; left: 50%; transform: translateX(-50%); 
+            bottom: calc(90px + 20vh + 50px); 
+            display: flex; justify-content: center; align-items: flex-end; 
+            z-index: 20; pointer-events: none; 
+        }
+        
+        .pokemon-gif { 
+            height: 50vh; width: auto; 
+            image-rendering: pixelated; 
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); 
+        }
 
         .game-textbox-container { 
             position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); 
@@ -137,13 +233,52 @@
         }
 
         .roll-info-container {
-            position: absolute; left: 60%; top: 40%;
-            display: flex; flex-direction: column; gap: 10px;
+            position: absolute; 
+            left: 60%; 
+            top: calc(30vh - 120px); 
+            display: flex; flex-direction: column; gap: 8px;
             text-align: left; z-index: 25;
-            font-family: 'Press Start 2P', cursive; font-size: 0.8rem;
+            font-family: 'Press Start 2P', cursive;
             text-shadow: 2px 2px 0 #000;
         }
-        .roll-text { opacity: 0; transition: opacity 0.5s; }
+
+        /* --- HEALTH BAR STYLES --- */
+        .health-bar-box {
+            background-color: rgba(0,0,0,0.5);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 3px solid #333;
+            width: 27vw; 
+            margin-bottom: 5px;
+            margin-top: 25px;
+        }
+        
+        .health-bar-top-row {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 8px;
+            color: white;
+            font-size: 1.2rem; 
+            font-weight: bold;
+        }
+
+        .health-bar-track {
+            width: 100%; 
+            height: 23px;
+            background-color: #555;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid white;
+        }
+        .health-bar-fill {
+            height: 100%;
+            width: 100%; 
+            background-color: #2ecc71; 
+            transition: width 0.5s ease;
+        }
+
+        .roll-text { opacity: 0; transition: opacity 0.5s; font-size: 0.8rem; color: white; }
 
         /* --- SIDEBAR (Right - Balls) --- */
         .sidebar-container { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 110px; height: 50vh; z-index: 30; }
@@ -183,36 +318,67 @@
         .caught-sidebar::-webkit-scrollbar-track { background: #f1f1f1; }
         .caught-sidebar::-webkit-scrollbar-thumb { background: #888; }
 
-        /* --- DECORATION (TRIPLED SIZE) --- */
+        /* --- END PAGE LIST STYLE --- */
+        .end-list-box {
+            width: 50vw; 
+            height: 35vh;
+            background-color: white; 
+            border: 5px solid gray;
+            overflow-y: auto; 
+            padding: 15px; 
+            box-sizing: border-box;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem; 
+            color: black;
+            text-align: left;
+            display: flex; flex-direction: column; gap: 12px;
+            margin: 20px 0;
+        }
+        .end-list-box::-webkit-scrollbar { width: 8px; }
+        .end-list-box::-webkit-scrollbar-track { background: #f1f1f1; }
+        .end-list-box::-webkit-scrollbar-thumb { background: #888; }
+
+        /* --- DECORATION --- */
         .decoration-wrapper { 
             position: absolute; bottom: 0; left: 0; width: 100%; 
-            height: 180px; /* 60 * 3 */
+            height: 180px; 
             z-index: 5; 
             background: linear-gradient(to bottom, transparent 50%, #ffffff 50%); 
         }
         .geo-rectangle { 
             position: absolute; width: 100%; 
-            height: 45px; /* 15 * 3 */
+            height: 45px; 
             background-color: #404040; z-index: 1; 
             top: 50%; left: 0; transform: translateY(-50%);
         }
         .geo-circle-outer { 
             position: absolute; 
-            width: 135px; height: 135px; /* 45 * 3 */
+            width: 135px; height: 135px; 
             border-radius: 50%; background-color: #404040; z-index: 2; 
             top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
         .geo-circle-inner { 
             position: absolute; 
-            width: 90px; height: 90px; /* 30 * 3 */
+            width: 90px; height: 90px; 
             border-radius: 50%; background-color: #fff; z-index: 3; 
             top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
 
+        /* --- ABOUT & DISCLAIMER --- */
         .common-section-two { padding: 80px 20px; background-color: #fff; color: #333; text-align: center; display: flex; justify-content: center; align-items: center; min-height: 40vh; }
-        .info-box { max-width: 700px; }
-        .info-box h2 { font-size: 2.5rem; margin-bottom: 20px; }
-        .info-box p { font-size: 1.1rem; line-height: 1.6; color: #666; }
+        .info-box { max-width: 700px; text-align: left; }
+        .info-box h2 { font-size: 2.5rem; margin-bottom: 20px; text-align: center; } /* Title Center */
+        .info-box p { font-size: 1.1rem; line-height: 1.6; color: #666; margin-bottom: 25px; } /* Paragraph Left */
+        
+        .disclaimer-text {
+            color: #cc0000;
+            font-weight: bold;
+            text-align: center;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
 
     </style>
 </head>
@@ -223,9 +389,7 @@
             <div class="hero-inner">
                 <h1 class="hero-title">Welcome to PokeStudy</h1>
                 <p class="hero-subtitle">
-                    Click Start to begin<br>
-                    Click My Collection to view your Pokemon Collection<br>
-                    Click Update Log to view changes made to this website
+                    Studying and Catching Pokemon made possible!
                 </p>
                 <div class="button-container">
                     <button class="btn-layered" onclick="switchView('view-external-2')"><span>My Collection</span></button>
@@ -236,7 +400,13 @@
             <div class="clock-container" id="clock1">00:00:00</div>
             <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
         </div>
-        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+        <div class="common-section-two">
+            <div class="info-box">
+                <h2>About</h2>
+                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was designed and implemented using Gemini Pro 3.0 as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p>
+                <div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div>
+            </div>
+        </div>
     </div>
 
     <div id="view-external-1" class="main-view">
@@ -244,7 +414,14 @@
             <button class="btn-float-back" onclick="switchView('view-home')">Return Home</button>
             <div class="shiny-slider-wrapper">
                 <label>Shiny Chance: 1 in <span id="shinyValueDisplay">4096</span></label>
-                <input type="range" id="shinySlider" min="1" max="4096" value="1" oninput="updateShinySlider(this.value)">
+                <input type="range" id="shinySlider" min="1" max="4096" value="1" disabled oninput="updateShinySlider(this.value)">
+                
+                <label id="speedLabel" style="margin-top:10px;">Speed: <span id="speedValueDisplay">1x</span></label>
+                <input type="range" id="speedSlider" min="1" max="10" value="1" step="1" disabled oninput="updateSpeedSlider(this.value)">
+                
+                <div id="speedWarning" class="speed-warning">WARNING: HIGH SPEEDS MAY CAUSE APP INSTABILITY!</div>
+
+                <input type="password" id="adminPass" class="admin-input" placeholder="Admin Settings" oninput="checkAdminPassword(this.value)">
             </div>
             <div class="hero-inner">
                 <h1 class="hero-title">Session Settings</h1>
@@ -278,7 +455,13 @@
             </div>
             <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
         </div>
-        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+        <div class="common-section-two">
+            <div class="info-box">
+                <h2>About</h2>
+                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p>
+                <div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div>
+            </div>
+        </div>
     </div>
 
     <div id="view-external-2" class="main-view">
@@ -287,21 +470,61 @@
             <div class="hero-inner"><h1>My Collection (WIP)</h1><p class="hero-subtitle">View your progress here.</p></div>
             <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
         </div>
-        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+        <div class="common-section-two">
+            <div class="info-box">
+                <h2>About</h2>
+                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p>
+                <div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div>
+            </div>
+        </div>
     </div>
 
     <div id="view-update-log" class="main-view">
         <div class="top-content page-log-bg">
             <button class="btn-float-back" onclick="switchView('view-home')">Return Home</button>
-            <div class="hero-inner"><h1>Update Log</h1><p class="hero-subtitle">Version History and Changes.</p></div>
+            <div class="hero-inner" style="padding-top: 80px;"> 
+                <h1 class="hero-title" style="margin-bottom: 30px;">Update Log</h1>
+                
+                <div class="version-header-container">
+                    <div class="version-title">version 1.0.0</div>
+                    <div class="trapezoid-wrapper">
+                        <div class="version-divider"></div>
+                        <div class="trapezoid-date">21/1/2026</div>
+                    </div>
+                </div>
+
+                <div class="log-scroll-area">
+                    <div class="log-item"><img src="Pokeball.png">Added Pokemon Gifs (Gen 8, end of Galar) <a href="https://play.pokemonshowdown.com/sprites/" target="_blank">Link</a></div>
+                    <div class="log-item"><img src="Pokeball.png">Added Pokemon APIs (Gen 8, end of Galar) <a href="https://www.kaggle.com/datasets/maca11/all-pokemon-dataset" target="_blank">Link</a></div>
+                    <div class="log-item"><img src="Pokeball.png">Added Catching formula <a href="https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Pok%C3%A9mon_Sword,_Shield,_Brilliant_Diamond,_and_Shining_Pearl" target="_blank">Link</a></div>
+                    <div class="log-item"><img src="Pokeball.png">Added randomly generated variables (Level: 1-100, 1% each, Statuses: No status, 50%/Paralyzed or Poisoned or Burned, 15%/Frozen or Asleep, 2.5%, HP: Full HP, 60%/ Half HP 30%, 1 HP, 10%)</div>
+                    <div class="log-item"><img src="Pokeball.png">Added Pokeball cycling (Pokeball, 50%/Great Ball, 30%/ Ultra Ball 15%/ Master Ball, 5%) <a href="https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9_Ball" target="_blank">Link</a></div>
+                    <div class="log-item"><img src="Pokeball.png">Added Textbar with text and enter animation</div>
+                    <div class="log-item"><img src="Pokeball.png">Added Dawn/Day/Sunset/Night cycle</div>
+                    <div class="log-item"><img src="Pokeball.png">Added CSS elements for Pokeball backgrounds</div>
+                    <div class="log-item"><img src="Pokeball.png">Added Shiny Roll</div>
+                    <div class="log-item"><img src="Pokeball.png">Added Admin settings (Speed Up: 1-10x/ Shiny Chance Up) <span style="font-size: 0.1em; margin-left:5px;">iloveclodsire</span></div>
+                    <div class="log-item"><img src="Pokeball.png">Added clock</div>
+                    <div class="log-item"><img src="Pokeball.png">Added Session Timer settings</div>
+                    <div class="log-item"><img src="Pokeball.png">Added Session Generation Settings</div>
+                    <div class="log-item"><img src="Pokeball.png">Added Textures (Battle Ring, Day, Dawn/Dusk, Night) <i>From original Pokemon Game Gen 6 or 7</i></div>
+                </div>
+
+            </div>
             <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
         </div>
-        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+        <div class="common-section-two">
+            <div class="info-box">
+                <h2>About</h2>
+                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p>
+                <div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div>
+            </div>
+        </div>
     </div>
 
     <div id="view-game" class="main-view">
         <div class="top-content game-bg" id="game-bg-target">
-            <button class="btn-float-back" onclick="stopGameAndReturn()">Return Home</button>
+            <button class="btn-float-back" onclick="stopGameAndToSettings()">BACK</button>
             <button class="btn-float-pause" id="btnPause" onclick="togglePause()">PAUSE</button>
             <button class="btn-float-end" id="btnEnd" onclick="handleEndButton()">END SESSION</button>
 
@@ -309,7 +532,16 @@
             <div class="catch-rate-display" id="catchRateDisplay"></div>
 
             <div class="roll-info-container">
-                <div id="hpRollText" class="roll-text"></div>
+                <div class="health-bar-box" id="healthBarUI" style="display: none;">
+                    <div class="health-bar-top-row">
+                        <span id="hbName">Pokemon</span>
+                        <span id="hbLevel">Lv. 50</span>
+                    </div>
+                    <div class="health-bar-track">
+                        <div class="health-bar-fill" id="hbFill"></div>
+                    </div>
+                </div>
+
                 <div id="statusRollText" class="roll-text"></div>
             </div>
 
@@ -326,7 +558,7 @@
 
             <div class="caught-sidebar" id="caughtListContainer">
                 <div style="font-weight: bold; margin-bottom: 10px;">CAUGHT POKEMON:</div>
-                </div>
+            </div>
 
             <div class="hero-inner">
                 <img src="Ring.png" class="battle-ring">
@@ -342,24 +574,262 @@
             
             <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
         </div>
-        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p><div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div></div></div>
     </div>
 
     <div id="view-end" class="main-view">
         <div class="top-content page-1-bg"> 
-            <div class="hero-inner">
+            <div class="hero-inner" style="gap: 15px; padding-bottom: 50px;">
                 <h1 class="hero-title">Session Complete</h1>
                 <p class="hero-subtitle">Good job for locking in, Professor Oak is proud of you!</p>
+                
+                <div id="endSessionList" class="end-list-box"></div>
+
                 <div class="button-container">
                     <button class="btn-layered" onclick="switchView('view-home')"><span>Return Home</span></button>
                 </div>
             </div>
             <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
         </div>
-        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p></div></div>
+        <div class="common-section-two">
+            <div class="info-box">
+                <h2>About</h2>
+                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Copilot Gemini. This app was solely designed and implemented using Gemini AI as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p>
+                <div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div>
+            </div>
+        </div>
     </div>
 
     <script>
+        // --- DATA MAPS FROM DIAGNOSTIC LOG ---
+        const VARIANT_MAP = {
+            3: ["venusaur", "venusaur-mega"],
+            6: ["charizard", "charizard-gmax"],
+            9: ["blastoise", "blastoise-mega"],
+            12: ["butterfree", "butterfree-gmax"],
+            15: ["beedrill", "beedrill-mega"],
+            18: ["pidgeot", "pidgeot-mega"],
+            19: ["rattata", "rattata-alola"],
+            20: ["raticate", "raticate-alola"],
+            25: ["pikachu", "pikachu-belle", "pikachu-pop-star", "pikachu-phd", "pikachu-libre", "pikachu-cosplay", "pikachu-starter", "pikachu-gmax"],
+            26: ["raichu", "raichu-alola"],
+            27: ["sandshrew", "sandshrew-alola"],
+            28: ["sandslash", "sandslash-alola"],
+            36: ["clefable", "clefable-mega"],
+            37: ["vulpix", "vulpix-alola"],
+            38: ["ninetales", "ninetales-alola"],
+            50: ["diglett", "diglett-alola"],
+            51: ["dugtrio", "dugtrio-alola"],
+            52: ["meowth", "meowth-alola", "meowth-galar", "meowth-gmax"],
+            53: ["persian", "persian-alola"],
+            58: ["growlithe", "growlithe-hisui"],
+            59: ["arcanine", "arcanine-hisui"],
+            65: ["alakazam", "alakazam-mega"],
+            68: ["machamp", "machamp-gmax"],
+            71: ["victreebel", "victreebel-mega"],
+            74: ["geodude", "geodude-alola"],
+            75: ["graveler", "graveler-alola"],
+            76: ["golem", "golem-alola"],
+            77: ["ponyta", "ponyta-galar"],
+            78: ["rapidash", "rapidash-galar"],
+            79: ["slowpoke", "slowpoke-galar"],
+            80: ["slowbro", "slowbro-mega", "slowbro-galar"],
+            83: ["farfetchd", "farfetchd-galar"],
+            88: ["grimer", "grimer-alola"],
+            89: ["muk", "muk-alola"],
+            94: ["gengar", "gengar-mega", "gengar-gmax"],
+            99: ["kingler", "kingler-gmax"],
+            100: ["voltorb", "voltorb-hisui"],
+            101: ["electrode", "electrode-hisui"],
+            103: ["exeggutor", "exeggutor-alola"],
+            105: ["marowak", "marowak-alola", "marowak-totem"],
+            110: ["weezing", "weezing-galar"],
+            115: ["kangaskhan", "kangaskhan-mega"],
+            121: ["starmie", "starmie-mega"],
+            127: ["pinsir", "pinsir-mega"],
+            130: ["gyarados", "gyarados-mega"],
+            131: ["lapras", "lapras-gmax"],
+            133: ["eevee", "eevee-starter", "eevee-gmax"],
+            142: ["aerodactyl", "aerodactyl-mega"],
+            143: ["snorlax", "snorlax-gmax"],
+            144: ["articuno", "articuno-galar"],
+            145: ["zapdos", "zapdos-galar"],
+            146: ["moltres", "moltres-galar"],
+            149: ["dragonite", "dragonite-mega"],
+            154: ["meganium", "meganium-mega"],
+            157: ["typhlosion", "typhlosion-hisui"],
+            160: ["feraligatr", "feraligatr-mega"],
+            181: ["ampharos", "ampharos-mega"],
+            194: ["wooper", "wooper-paldea"],
+            199: ["slowking", "slowking-galar"],
+            201: ["unown", "unown-a", "unown-b", "unown-c", "unown-d", "unown-e", "unown-f", "unown-g", "unown-h", "unown-i", "unown-j", "unown-k", "unown-l", "unown-m", "unown-n", "unown-o", "unown-p", "unown-q", "unown-r", "unown-s", "unown-t", "unown-u", "unown-v", "unown-w", "unown-x", "unown-y", "unown-z", "unown-question", "unown-exclamation"],
+            208: ["steelix", "steelix-mega"],
+            211: ["qwilfish", "qwilfish-hisui"],
+            212: ["scizor", "scizor-mega"],
+            214: ["heracross", "heracross-mega"],
+            215: ["sneasel", "sneasel-hisui"],
+            222: ["corsola", "corsola-galar"],
+            227: ["skarmory", "skarmory-mega"],
+            229: ["houndoom", "houndoom-mega"],
+            248: ["tyranitar", "tyranitar-mega"],
+            254: ["sceptile", "sceptile-mega"],
+            257: ["blaziken", "blaziken-mega"],
+            260: ["swampert", "swampert-mega"],
+            263: ["zigzagoon", "zigzagoon-galar"],
+            264: ["linoone", "linoone-galar"],
+            282: ["gardevoir", "gardevoir-mega"],
+            302: ["sableye", "sableye-mega"],
+            303: ["mawile", "mawile-mega"],
+            306: ["aggron", "aggron-mega"],
+            308: ["medicham", "medicham-mega"],
+            310: ["manectric", "manectric-mega"],
+            319: ["sharpedo", "sharpedo-mega"],
+            323: ["camerupt", "camerupt-mega"],
+            334: ["altaria", "altaria-mega"],
+            351: ["castform", "castform-sunny", "castform-rainy", "castform-snowy"],
+            354: ["banette", "banette-mega"],
+            359: ["absol", "absol-mega"],
+            362: ["glalie", "glalie-mega"],
+            373: ["salamence", "salamence-mega"],
+            376: ["metagross", "metagross-mega"],
+            380: ["latias", "latias-mega"],
+            381: ["latios", "latios-mega"],
+            382: ["kyogre", "kyogre-primal"],
+            383: ["groudon", "groudon-primal"],
+            384: ["rayquaza", "rayquaza-mega"],
+            386: ["deoxys", "deoxys-attack", "deoxys-defense", "deoxys-speed"],
+            412: ["burmy", "burmy-sandy", "burmy-trash"],
+            413: ["wormadam", "wormadam-sandy", "wormadam-trash"],
+            421: ["cherrim", "cherrim-sunshine"],
+            422: ["shellos", "shellos-east"],
+            423: ["gastrodon", "gastrodon-east"],
+            428: ["lopunny", "lopunny-mega"],
+            445: ["garchomp", "garchomp-mega"],
+            448: ["lucario", "lucario-mega"],
+            460: ["abomasnow", "abomasnow-mega"],
+            475: ["gallade", "gallade-mega"],
+            478: ["froslass", "froslass-mega"],
+            479: ["rotom", "rotom-heat", "rotom-wash", "rotom-frost", "rotom-fan", "rotom-mow"],
+            487: ["giratina", "giratina-origin"],
+            492: ["shaymin", "shaymin-sky"],
+            500: ["emboar", "emboar-mega"],
+            503: ["samurott", "samurott-hisui"],
+            531: ["audino", "audino-mega"],
+            549: ["lilligant", "lilligant-hisui"],
+            550: ["basculin", "basculin-blue-striped", "basculin-white-striped"],
+            554: ["darumaka", "darumaka-galar"],
+            555: ["darmanitan", "darmanitan-zen", "darmanitan-galar", "darmanitan-galar-zen"],
+            562: ["yamask", "yamask-galar"],
+            569: ["garbodor", "garbodor-gmax"],
+            570: ["zorua", "zorua-hisui"],
+            571: ["zoroark", "zoroark-hisui"],
+            585: ["deerling", "deerling-summer", "deerling-autumn", "deerling-winter"],
+            586: ["sawsbuck", "sawsbuck-summer", "sawsbuck-autumn", "sawsbuck-winter"],
+            592: ["frillish", "frillish-f"],
+            593: ["jellicent", "jellicent-f"],
+            618: ["stunfisk", "stunfisk-galar"],
+            628: ["braviary", "braviary-hisui"],
+            641: ["tornadus", "tornadus-therian"],
+            642: ["thundurus", "thundurus-therian"],
+            645: ["landorus", "landorus-therian"],
+            646: ["kyurem", "kyurem-black", "kyurem-white"],
+            647: ["keldeo", "keldeo-resolute"],
+            648: ["meloetta", "meloetta-pirouette"],
+            658: ["greninja", "greninja-ash"],
+            666: ["vivillon", "vivillon-archipelago", "vivillon-continental", "vivillon-elegant", "vivillon-fancy", "vivillon-garden", "vivillon-highplains", "vivillon-icysnow", "vivillon-jungle", "vivillon-marine", "vivillon-modern", "vivillon-monsoon", "vivillon-ocean", "vivillon-pokeball", "vivillon-polar", "vivillon-river", "vivillon-sandstorm", "vivillon-savanna", "vivillon-sun", "vivillon-tundra"],
+            669: ["flabebe", "flabebe-blue", "flabebe-orange", "flabebe-white", "flabebe-yellow"],
+            670: ["floette", "floette-blue", "floette-orange", "floette-white", "floette-yellow", "floette-eternal"],
+            671: ["florges", "florges-blue", "florges-orange", "florges-white", "florges-yellow"],
+            676: ["furfrou", "furfrou-dandy", "furfrou-debutante", "furfrou-diamond", "furfrou-heart", "furfrou-kabuki", "furfrou-lareine", "furfrou-matron", "furfrou-pharaoh", "furfrou-star"],
+            678: ["meowstic", "meowstic-f"],
+            681: ["aegislash", "aegislash-blade"],
+            705: ["sliggoo", "sliggoo-hisui"],
+            706: ["goodra", "goodra-hisui"],
+            710: ["pumpkaboo", "pumpkaboo-small", "pumpkaboo-large", "pumpkaboo-super"],
+            711: ["gourgeist", "gourgeist-small", "gourgeist-large", "gourgeist-super"],
+            713: ["avalugg", "avalugg-hisui"],
+            718: ["zygarde", "zygarde-complete", "zygarde-10"],
+            719: ["diancie", "diancie-mega"],
+            720: ["hoopa", "hoopa-unbound"],
+            724: ["decidueye", "decidueye-hisui"],
+            735: ["gumshoos", "gumshoos-totem"],
+            738: ["vikavolt", "vikavolt-totem"],
+            741: ["oricorio", "oricorio-pompom", "oricorio-pau", "oricorio-sensu"],
+            745: ["lycanroc", "lycanroc-midnight", "lycanroc-dusk"],
+            746: ["wishiwashi", "wishiwashi-school"],
+            752: ["araquanid", "araquanid-totem"],
+            754: ["lurantis", "lurantis-totem"],
+            758: ["salazzle", "salazzle-totem"],
+            774: ["minior", "minior-orange", "minior-yellow", "minior-green", "minior-blue", "minior-indigo", "minior-violet"],
+            777: ["togedemaru", "togedemaru-totem"],
+            778: ["mimikyu", "mimikyu-busted"],
+            800: ["necrozma", "necrozma-ultra", "necrozma-duskmane", "necrozma-dawnwings"],
+            801: ["magearna", "magearna-original"],
+            809: ["melmetal", "melmetal-gmax"],
+            818: ["inteleon", "inteleon-gmax"],
+            823: ["corviknight", "corviknight-gmax"],
+            826: ["orbeetle", "orbeetle-gmax"],
+            834: ["drednaw", "drednaw-gmax"],
+            839: ["coalossal", "coalossal-gmax"],
+            841: ["flapple", "flapple-gmax"],
+            842: ["appletun", "appletun-gmax"],
+            844: ["sandaconda", "sandaconda-gmax"],
+            845: ["cramorant", "cramorant-gulping", "cramorant-gorging"],
+            849: ["toxtricity-low-key", "toxtricity-gmax", "toxtricity-low-key-gmax"],
+            851: ["centiskorch", "centiskorch-gmax"],
+            858: ["hatterene", "hatterene-gmax"],
+            861: ["grimmsnarl", "grimmsnarl-gmax"],
+            // ALCREMIE GENERATED BELOW
+            875: ["eiscue", "eiscue-noice"],
+            877: ["morpeko", "morpeko-hangry"],
+            879: ["copperajah", "copperajah-gmax"],
+            884: ["duraludon", "duraludon-gmax"],
+            888: ["zacian", "zacian-crowned"],
+            889: ["zamazenta", "zamazenta-crowned"],
+            890: ["eternatus", "eternatus-eternamax"],
+            893: ["zarude", "zarude-dada"],
+            898: ["calyrex", "calyrex-ice", "calyrex-shadow"]
+        };
+
+        // --- ALCREMIE LIST GENERATION ---
+        (function generateAlcremieForms() {
+            const flavors = ['vanilla-cream', 'ruby-cream', 'matcha-cream', 'mint-cream', 'lemon-cream', 'salted-cream', 'ruby-swirl', 'caramel-swirl', 'rainbow-swirl'];
+            const sweets = ['strawberry', 'berry', 'love', 'star', 'clover', 'flower', 'ribbon'];
+            
+            let forms = ['alcremie-gmax']; // Start with GMAX
+            
+            // Generate all 63 Combinations
+            flavors.forEach(flavor => {
+                sweets.forEach(sweet => {
+                    forms.push(`alcremie-${flavor}-${sweet}`);
+                });
+            });
+
+            // Assign to ID 869
+            VARIANT_MAP[869] = forms;
+        })();
+
+        const FIX_MAP = {
+            32: "nidoranm",
+            122: "mrmime",
+            250: "hooh",
+            439: "mimejr",
+            550: "basculin",
+            678: "meowstic",
+            772: "typenull",
+            782: "jangmoo",
+            783: "hakamoo",
+            784: "kommoo",
+            785: "tapukoko",
+            786: "tapulele",
+            787: "tapubulu",
+            788: "tapufini",
+            849: "toxtricity",
+            866: "mrrime",
+            876: "indeedee",
+            892: "urshifu"
+        };
+
         // --- BASIC UTILS ---
         function switchView(targetId) {
             const currentView = document.querySelector('.active-view');
@@ -417,13 +887,66 @@
             document.getElementById('shinyValueDisplay').innerText = shinyOdds;
             localStorage.setItem('shinyChance', shinyOdds);
         }
-        function initShinySlider() {
-            const saved = localStorage.getItem('shinyChance');
-            if (saved) {
-                shinyOdds = parseInt(saved);
-                document.getElementById('shinySlider').value = 4097 - shinyOdds;
-                document.getElementById('shinyValueDisplay').innerText = shinyOdds;
+
+        let gameTickIntervalTime = 1000;
+        function updateSpeedSlider(val) {
+            const multiplier = parseInt(val);
+            document.getElementById('speedValueDisplay').innerText = multiplier + "x";
+            
+            // Logic: 1x = 1000ms, 10x = 100ms
+            gameTickIntervalTime = 1000 / multiplier; 
+
+            // If game is running, restart interval
+            if (gameInterval && !isPaused) {
+                clearInterval(gameInterval);
+                gameInterval = setInterval(gameTick, gameTickIntervalTime);
             }
+        }
+
+        function checkAdminPassword(val) {
+            const slider = document.getElementById('shinySlider');
+            const speedSlider = document.getElementById('speedSlider');
+            const warning = document.getElementById('speedWarning');
+
+            if (val === 'iloveclodsire') {
+                // Unlock Shiny
+                slider.disabled = false;
+                slider.style.opacity = '1';
+                slider.style.cursor = 'pointer';
+
+                // UNLOCK SPEED SLIDER
+                speedSlider.disabled = false;
+                speedSlider.style.opacity = '1';
+                speedSlider.style.cursor = 'pointer';
+
+                // Show Warning
+                warning.style.display = 'block';
+
+            } else {
+                // Lock Shiny
+                slider.disabled = true;
+                slider.style.opacity = '0.5';
+                slider.style.cursor = 'not-allowed';
+                slider.value = 1;
+                updateShinySlider(1);
+
+                // LOCK SPEED SLIDER
+                speedSlider.disabled = true;
+                speedSlider.style.opacity = '0.5';
+                speedSlider.style.cursor = 'not-allowed';
+                speedSlider.value = 1;
+                updateSpeedSlider(1);
+
+                // Hide Warning
+                warning.style.display = 'none';
+            }
+        }
+
+        function initShinySlider() {
+            const slider = document.getElementById('shinySlider');
+            slider.value = 1; 
+            updateShinySlider(1);
+            slider.disabled = true;
         }
 
         // --- GAME VARIABLES ---
@@ -433,17 +956,18 @@
         let validPokemonIds = [];
         let typewriterInterval = null; 
         let caughtPokemonList = []; 
+        let currentBallIndex = 0; // GLOBAL BALL INDEX
 
         // Encounter Variables
         let encounterSeconds = 0;
         let currentFinalChance = 0;
         let currentPokemonName = "";
+        let currentLevel = 1; 
         let isShiny = false;
         let transitionPending = false;
         
-        // NEW: End Game State
         let endConfirmState = false;
-        let endConfirmTimeout = null; // Variable to hold the timeout ID
+        let endConfirmTimeout = null; 
 
         const generationRanges = [
             { start: 1, end: 151 }, { start: 152, end: 251 }, { start: 252, end: 386 },
@@ -469,7 +993,10 @@
             gameSecondsRemaining = configMinutes * 60; 
             isPaused = false;
             
-            // Reset End Button
+            // Clear caught list for new session
+            caughtPokemonList = [];
+            document.getElementById('caughtListContainer').innerHTML = '<div style="font-weight: bold; margin-bottom: 10px;">CAUGHT POKEMON:</div>';
+
             endConfirmState = false;
             if(endConfirmTimeout) clearTimeout(endConfirmTimeout);
             const endBtn = document.getElementById('btnEnd');
@@ -482,7 +1009,9 @@
             
             runGameCycle(); 
             if (gameInterval) clearInterval(gameInterval);
-            gameInterval = setInterval(gameTick, 1000);
+            
+            // Start loop with current Speed setting
+            gameInterval = setInterval(gameTick, gameTickIntervalTime);
         }
 
         function stopGameAndReturn() {
@@ -491,21 +1020,24 @@
             switchView('view-home');
         }
 
-        // NEW: END GAME BUTTON LOGIC WITH TIMEOUT
+        // NEW FUNCTION: BACK BUTTON
+        function stopGameAndToSettings() {
+            clearInterval(gameInterval);
+            clearInterval(typewriterInterval); 
+            switchView('view-external-1');
+        }
+
         function handleEndButton() {
             const btn = document.getElementById('btnEnd');
             if (!endConfirmState) {
-                // Change to confirmation state
                 btn.innerText = "CONFIRM END";
                 btn.style.color = "#c0392b"; 
                 endConfirmState = true;
                 
-                // Clear any existing timeout
                 if(endConfirmTimeout) clearTimeout(endConfirmTimeout);
                 
-                // Set timeout to revert after 3 seconds
                 endConfirmTimeout = setTimeout(() => {
-                    if (endConfirmState) { // Only revert if still in confirm state
+                    if (endConfirmState) { 
                         endConfirmState = false;
                         btn.innerText = "END SESSION";
                         btn.style.color = "#e74c3c";
@@ -519,7 +1051,27 @@
         function goToEndPage() {
             clearInterval(gameInterval);
             clearInterval(typewriterInterval); 
-            if(endConfirmTimeout) clearTimeout(endConfirmTimeout); // Cleanup
+            if(endConfirmTimeout) clearTimeout(endConfirmTimeout); 
+
+            // POPULATE END PAGE LIST
+            const endList = document.getElementById('endSessionList');
+            endList.innerHTML = '<div style="text-align: center; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">SESSION CATCHES</div>';
+
+            if (caughtPokemonList.length === 0) {
+                endList.innerHTML += '<div style="text-align: center; margin-top: 20px;">No Pokemon Caught...</div>';
+            } else {
+                caughtPokemonList.forEach(p => {
+                    const item = document.createElement('div');
+                    let displayString = `Lv. ${p.level} ${p.name}`;
+                    if (p.name.includes('★')) {
+                        item.innerHTML = displayString.replace('★', '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>');
+                    } else {
+                        item.innerText = displayString;
+                    }
+                    endList.appendChild(item);
+                });
+            }
+
             switchView('view-end');
         }
 
@@ -534,12 +1086,10 @@
         function gameTick() {
             if (isPaused) return;
 
-            // Global Timer
             if (gameSecondsRemaining > 0) {
                 gameSecondsRemaining--; 
                 updateGameTimerDisplay();
             } else {
-                // TIMER RAN OUT -> END PAGE
                 goToEndPage();
                 return;
             }
@@ -555,36 +1105,54 @@
             if (encounterSeconds % 2 === 0) {
                 if (encounterSeconds >= 2 && encounterSeconds < 18) {
                     let caught = Math.random() < currentFinalChance;
-                    let displayName = capitalize(currentPokemonName) + (isShiny ? " ★" : "");
+                    let displayName = currentPokemonName + (isShiny ? " ★" : "");
 
                     if (caught) {
                         startTypewriter(`Gotcha! The wild ${displayName} was caught!`);
                         transitionPending = true;
                         
-                        addCaughtPokemon(displayName);
+                        addCaughtPokemon(displayName, currentLevel, currentBallIndex);
                     } else {
                         startTypewriter(`Oh no! The wild ${displayName} broke free!`);
                     }
                 } 
                 else if (encounterSeconds === 18) {
-                    let displayName = capitalize(currentPokemonName) + (isShiny ? " ★" : "");
+                    let displayName = currentPokemonName + (isShiny ? " ★" : "");
                     startTypewriter(`Oh no! The wild ${displayName} fled!`);
                     transitionPending = true;
                 }
             }
         }
 
-        function addCaughtPokemon(name) {
-            caughtPokemonList.push(name);
+        function addCaughtPokemon(name, level, ballIdx) {
+            caughtPokemonList.push({name, level, ballIdx});
             const container = document.getElementById('caughtListContainer');
             const item = document.createElement('div');
-            
             item.style.color = 'black'; 
+            item.style.display = 'flex'; 
+            item.style.alignItems = 'center';
+            
+            // Create Ball Icon
+            const ballImg = document.createElement('img');
+            const ballNames = ['Pokeball.png', 'Greatball.png', 'Ultraball.png', 'Masterball.png'];
+            ballImg.src = ballNames[ballIdx];
+            ballImg.style.width = '3em'; // Increased to 3x text size
+            ballImg.style.height = '3em';
+            ballImg.style.marginRight = '8px';
+            ballImg.style.imageRendering = 'pixelated';
+            
+            // Create Text Span
+            const textSpan = document.createElement('span');
+            let displayString = `Lv. ${level} ${name}`;
+            
             if (name.includes('★')) {
-                item.innerHTML = name.replace('★', '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>');
+                textSpan.innerHTML = displayString.replace('★', '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>');
             } else {
-                item.innerText = name;
+                textSpan.innerText = displayString;
             }
+            
+            item.appendChild(ballImg);
+            item.appendChild(textSpan);
             
             container.appendChild(item);
             container.scrollTop = container.scrollHeight;
@@ -600,11 +1168,13 @@
             const textBox = document.getElementById('gameTextBox');
             textBox.innerHTML = ""; 
             
-            const totalDuration = 1200;
-            const charDelay = Math.floor(totalDuration / text.length);
-            let i = 0;
-            
             if (typewriterInterval) clearInterval(typewriterInterval);
+            
+            // SPEED FIX: DYNAMIC CALCULATION
+            const timeWindow = 2 * gameTickIntervalTime;
+            const targetDuration = timeWindow * 0.75;
+            const charDelay = Math.max(1, Math.floor(targetDuration / text.length));
+            let i = 0;
             
             typewriterInterval = setInterval(() => {
                 const char = text.charAt(i);
@@ -622,22 +1192,56 @@
 
         function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
+        // NEW FORMATTING FUNCTION
+        function formatPokemonName(slug) {
+            const parts = slug.split('-');
+            const base = capitalize(parts[0]);
+
+            // Check for specific forms to keep
+            if (parts.includes('mega')) return `Mega ${base}`;
+            if (parts.includes('primal')) return `Primal ${base}`;
+            if (parts.includes('alola')) return `Alolan ${base}`;
+            if (parts.includes('galar')) return `Galarian ${base}`;
+            if (parts.includes('hisui')) return `Hisuian ${base}`;
+            if (parts.includes('paldea')) return `Paldean ${base}`;
+            if (parts.includes('gmax')) return `Gigantamax ${base}`;
+            if (parts.includes('eternamax')) return `Eternamax ${base}`;
+            
+            // New formats
+            if (slug.includes('pompom')) return `Oricorio Pom Pom`;
+            if (slug.includes('duskmane')) return `Necrozma Dusk Mane`;
+            if (slug.includes('dawnwings')) return `Necrozma Dawn Wings`;
+
+            // ALCREMIE FORMATTING
+            if (slug.startsWith('alcremie-') && !slug.includes('gmax')) {
+                 // Format: alcremie-ruby-cream-berry -> Alcremie Ruby Cream Berry
+                 return slug.split('-').map(capitalize).join(' ');
+            }
+
+            // If none of the above, return the Clean Base Name
+            return base;
+        }
+
         async function runGameCycle() {
+            // FIX: Clear interval immediately to stop previous text overlap
+            if (typewriterInterval) clearInterval(typewriterInterval);
+
             encounterSeconds = 0;
             transitionPending = false;
 
             const imgElement = document.getElementById('pokemonSprite');
             const textBox = document.getElementById('gameTextBox');
-            const hpText = document.getElementById('hpRollText');
             const statusText = document.getElementById('statusRollText');
             const catchDisplay = document.getElementById('catchRateDisplay');
             const selector = document.getElementById('ballSelector');
+            const healthBarUI = document.getElementById('healthBarUI');
 
             imgElement.style.display = 'none';
             textBox.innerHTML = "";
-            hpText.style.opacity = 0; statusText.style.opacity = 0;
+            statusText.style.opacity = 0;
             catchDisplay.innerText = "";
             selector.style.display = 'none';
+            healthBarUI.style.display = 'none'; 
             document.querySelectorAll('.poke-icon').forEach(icon => icon.classList.remove('active'));
 
             const randomIndex = Math.floor(Math.random() * validPokemonIds.length);
@@ -651,31 +1255,70 @@
                 const pokeData = await pokemonRes.json();
                 const speciesData = await speciesRes.json();
 
-                currentPokemonName = pokeData.name;
-                if (currentPokemonName.includes('mega-')) { runGameCycle(); return; }
+                // 1. Determine base name
+                let apiName = pokeData.name;
+
+                // 2. Logic for Sprite Slug (Variants > Fixes > Default)
+                let spriteSlug = apiName;
+
+                if (VARIANT_MAP[randomId]) {
+                    const variants = VARIANT_MAP[randomId];
+                    spriteSlug = variants[Math.floor(Math.random() * variants.length)];
+                } else if (FIX_MAP[randomId]) {
+                    spriteSlug = FIX_MAP[randomId];
+                }
+
+                // 3. Format Display Name
+                currentPokemonName = formatPokemonName(spriteSlug);
 
                 const hpMax = pokeData.stats[0].base_stat; 
                 const catchRate = speciesData.capture_rate;
 
                 const shinyRoll = Math.floor(Math.random() * shinyOdds) + 1;
                 isShiny = (shinyRoll === 1);
+                
+                // Shiny Handling
                 const folder = isShiny ? 'ani-shiny' : 'ani';
 
-                imgElement.src = `https://play.pokemonshowdown.com/sprites/${folder}/${currentPokemonName}.gif`;
+                imgElement.src = `https://play.pokemonshowdown.com/sprites/${folder}/${spriteSlug}.gif`;
                 imgElement.style.display = 'block';
 
-                let hpCurrent, hpString, hpColor;
-                const rHp = Math.random();
-                if (rHp < 0.60) { hpCurrent = hpMax; hpString = "Full HP"; hpColor = "#2ecc71"; } 
-                else if (rHp < 0.90) { hpCurrent = hpMax / 2; hpString = "Half HP"; hpColor = "#f1c40f"; } 
-                else { hpCurrent = 1; hpString = "1 HP!"; hpColor = "#e74c3c"; } 
+                currentLevel = Math.floor(Math.random() * 100) + 1;
 
-                let bonusBall, ballIndex;
+                let hpCurrent, hpColor, barWidth, barColor;
+                const rHp = Math.random();
+                if (rHp < 0.60) { 
+                    hpCurrent = hpMax; hpColor = "#2ecc71"; 
+                    barWidth = "100%"; barColor = "#2ecc71"; 
+                } 
+                else if (rHp < 0.90) { 
+                    hpCurrent = hpMax / 2; hpColor = "#f1c40f"; 
+                    barWidth = "50%"; barColor = "#f1c40f"; 
+                } 
+                else { 
+                    hpCurrent = 1; hpColor = "#e74c3c"; 
+                    barWidth = "5%"; barColor = "#e74c3c"; 
+                } 
+
+                // --- SHINY STAR ON HEALTH BAR NAME ---
+                const hbName = document.getElementById('hbName');
+                hbName.innerHTML = currentPokemonName;
+                if (isShiny) {
+                    hbName.innerHTML += ' <span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>';
+                }
+
+                document.getElementById('hbLevel').innerText = "Lv. " + currentLevel;
+                document.getElementById('hbFill').style.width = barWidth;
+                document.getElementById('hbFill').style.backgroundColor = barColor;
+                healthBarUI.style.display = 'block'; 
+
+                let bonusBall;
+                // Removed local let ballIndex declaration
                 const rBall = Math.random();
-                if (rBall < 0.50) { bonusBall = 1.0; ballIndex = 0; } 
-                else if (rBall < 0.80) { bonusBall = 1.5; ballIndex = 1; } 
-                else if (rBall < 0.95) { bonusBall = 2.0; ballIndex = 2; } 
-                else { bonusBall = 255; ballIndex = 3; } 
+                if (rBall < 0.50) { bonusBall = 1.0; currentBallIndex = 0; } 
+                else if (rBall < 0.80) { bonusBall = 1.5; currentBallIndex = 1; } 
+                else if (rBall < 0.95) { bonusBall = 2.0; currentBallIndex = 2; } 
+                else { bonusBall = 255; currentBallIndex = 3; } 
 
                 let bonusStatus, statusString, statusColor;
                 const rStatus = Math.random();
@@ -686,17 +1329,17 @@
                 else if (rStatus < 0.975) { bonusStatus = 2.5; statusString = "Frozen!"; statusColor = "#3498db"; }
                 else { bonusStatus = 2.5; statusString = "Asleep!"; statusColor = "#95a5a6"; }
 
-                hpText.innerText = hpString; hpText.style.color = hpColor; hpText.style.opacity = 1;
                 statusText.innerText = statusString; statusText.style.color = statusColor; statusText.style.opacity = 1;
 
-                const ballIcon = document.getElementById(`ball-${ballIndex}`);
+                const ballIcon = document.getElementById(`ball-${currentBallIndex}`);
                 if (ballIcon) {
                     ballIcon.classList.add('active');
                     selector.style.display = 'block';
                     selector.style.top = (ballIcon.offsetTop + 6) + 'px'; 
                 }
 
-                const bonusLevel = 3; 
+                const bonusLevel = Math.max((30 - currentLevel) / 10, 1);
+
                 if (bonusBall === 255) {
                     currentFinalChance = 1.0; 
                 } else {
@@ -705,10 +1348,9 @@
                     else currentFinalChance = Math.pow(a / 255, 3);
                 }
 
-                // UPDATED: Now displays 3 decimal places
                 catchDisplay.innerText = `Catch Chance: ${(currentFinalChance * 100).toFixed(3)}%`;
 
-                let displayName = capitalize(currentPokemonName) + (isShiny ? " ★" : "");
+                let displayName = currentPokemonName + (isShiny ? " ★" : "");
                 startTypewriter(`Wild ${displayName} appeared!`);
 
             } catch (error) {
