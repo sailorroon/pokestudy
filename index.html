@@ -35,10 +35,9 @@
         /* GREAT BALL THEME BACKGROUND */
         .page-log-bg { 
             background-color: #2B6F9C; /* Great Ball Blue */
-            /* Red strips: 0-33.3% and 66.6%-100% horizontally. */
             background-image: linear-gradient(to right, #e74c3c 33.33%, transparent 33.33%, transparent 66.66%, #e74c3c 66.66%);
-            background-size: 100% 20%; /* 1/5th height */
-            background-position: center; /* Centered vertically (2/5 to 3/5) */
+            background-size: 100% 20%; 
+            background-position: center;
             background-repeat: no-repeat;
             color: white; 
         }
@@ -85,6 +84,23 @@
         .checklist-item { font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
         .checklist-item input { transform: scale(1.5); cursor: pointer; }
 
+        /* --- NEW SETTINGS BOX (Balls) --- */
+        .settings-box { 
+            background: rgba(0, 0, 0, 0.3); 
+            padding: 15px 30px; 
+            border-radius: 15px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            gap: 10px; 
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .settings-row { display: flex; align-items: center; gap: 20px; }
+        .settings-label { font-size: 1.1rem; font-weight: bold; }
+
+        /* ADMIN SLIDER WRAPPER */
         .shiny-slider-wrapper { 
             position: absolute; top: 40px; right: 40px; 
             background: rgba(0, 0, 0, 0.6); padding: 20px; 
@@ -113,98 +129,32 @@
         }
 
         /* --- UPDATE LOG STYLE --- */
-        .version-header-container {
-            width: 75vw;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin-top: 20px;
-        }
-        .version-title {
-            font-size: 3rem;
-            font-weight: bold;
-            font-style: italic;
-            color: black;
-            margin: 0;
-            text-shadow: none; 
-        }
-        .trapezoid-wrapper {
-            position: relative;
-            width: 100%;
-            height: 25px;
-            margin-top: 5px;
-            margin-bottom: 20px;
-        }
-        .version-divider {
-            width: 100%;
-            height: 100%;
-            background-color: #404040;
-            clip-path: polygon(0 0, 100% 0, calc(100% - 25px) 100%, 0 100%);
-        }
-        .trapezoid-date {
-            position: absolute;
-            right: 30px; 
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.8rem;
-            color: #ccc;
-            font-weight: bold;
-        }
+        .version-header-container { width: 75vw; display: flex; flex-direction: column; align-items: flex-start; margin-top: 20px; }
+        .version-title { font-size: 3rem; font-weight: bold; font-style: italic; color: black; margin: 0; text-shadow: none; }
+        .trapezoid-wrapper { position: relative; width: 100%; height: 25px; margin-top: 5px; margin-bottom: 20px; }
+        .version-divider { width: 100%; height: 100%; background-color: #404040; clip-path: polygon(0 0, 100% 0, calc(100% - 25px) 100%, 0 100%); }
+        .trapezoid-date { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: #ccc; font-weight: bold; }
         
-        .log-scroll-area {
-            width: 80vw;
-            height: 50vh;
-            overflow-y: auto;
-            text-align: left;
-            padding-left: 12.5vw; 
-            box-sizing: border-box;
-        }
+        .log-scroll-area { width: 80vw; height: 50vh; overflow-y: auto; text-align: left; padding-left: 12.5vw; box-sizing: border-box; }
         .log-scroll-area::-webkit-scrollbar { width: 8px; }
         .log-scroll-area::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
         .log-scroll-area::-webkit-scrollbar-thumb { background: #888; }
 
-        .log-item {
-            font-size: 1.2rem;
-            color: white;
-            margin-bottom: 12px;
-            text-shadow: 1px 1px 2px #000;
-            line-height: 1.4;
-            display: flex; /* Flex to align ball icon and text */
-            align-items: center;
-        }
-        .log-item img {
-            width: 3em; 
-            height: 3em;
-            margin-right: 15px;
-            image-rendering: pixelated;
-            flex-shrink: 0;
-        }
+        .log-item { font-size: 1.2rem; color: white; margin-bottom: 12px; text-shadow: 1px 1px 2px #000; line-height: 1.4; display: flex; align-items: center; }
+        .log-item img { width: 3em; height: 3em; margin-right: 15px; image-rendering: pixelated; flex-shrink: 0; }
         .log-item a { color: #f1c40f; text-decoration: underline; }
         .log-item a:hover { color: white; }
 
         /* --- GAME PAGE --- */
         .game-countdown { position: absolute; top: 40px; right: 40px; font-family: 'Courier New', Courier, monospace; font-size: 2.5rem; font-weight: bold; color: white; text-shadow: 0 0 10px rgba(255,0,0,0.7); z-index: 20; }
         
-        .catch-rate-display {
-            position: absolute; top: 90px; right: 40px;
-            font-family: 'Courier New', Courier, monospace; font-size: 1.2rem; font-weight: bold; 
-            color: #2ecc71; text-shadow: 1px 1px 2px #000; z-index: 20;
-        }
+        .catch-rate-display { position: absolute; top: 90px; right: 40px; font-family: 'Courier New', Courier, monospace; font-size: 1.2rem; font-weight: bold; color: #2ecc71; text-shadow: 1px 1px 2px #000; z-index: 20; }
 
         .battle-ring { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(90px + 20vh + 10px); width: 33.33vw; height: auto; z-index: 10; image-rendering: pixelated; }
         
-        .pokemon-display { 
-            position: absolute; left: 50%; transform: translateX(-50%); 
-            bottom: calc(90px + 20vh + 50px); 
-            display: flex; justify-content: center; align-items: flex-end; 
-            z-index: 20; pointer-events: none; 
-        }
+        .pokemon-display { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(90px + 20vh + 50px); display: flex; justify-content: center; align-items: flex-end; z-index: 20; pointer-events: none; }
         
-        .pokemon-gif { 
-            height: 50vh; width: auto; 
-            image-rendering: pixelated; 
-            filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); 
-        }
+        .pokemon-gif { height: 50vh; width: auto; image-rendering: pixelated; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
 
         .game-textbox-container { 
             position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); 
@@ -215,68 +165,20 @@
             box-shadow: 5px 5px 0px rgba(0,0,0,0.5); 
         }
 
-        .textbox-triangle {
-            position: absolute;
-            bottom: 15px; right: 20px; 
-            width: 0; height: 0; 
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 15px solid #e74c3c; 
-            animation: blink 1s infinite;
-        }
+        .textbox-triangle { position: absolute; bottom: 15px; right: 20px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 15px solid #e74c3c; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        .game-text { 
-            font-family: 'Press Start 2P', 'Courier New', monospace; 
-            font-size: 2.4rem; line-height: 1.4; color: black; 
-            text-align: left; width: 100%; white-space: pre-wrap; margin: 0; 
-        }
+        .game-text { font-family: 'Press Start 2P', 'Courier New', monospace; font-size: 2.4rem; line-height: 1.4; color: black; text-align: left; width: 100%; white-space: pre-wrap; margin: 0; }
 
-        .roll-info-container {
-            position: absolute; 
-            left: 60%; 
-            top: calc(30vh - 120px); 
-            display: flex; flex-direction: column; gap: 8px;
-            text-align: left; z-index: 25;
-            font-family: 'Press Start 2P', cursive;
-            text-shadow: 2px 2px 0 #000;
-        }
+        .roll-info-container { position: absolute; left: 60%; top: calc(30vh - 120px); display: flex; flex-direction: column; gap: 8px; text-align: left; z-index: 25; font-family: 'Press Start 2P', cursive; text-shadow: 2px 2px 0 #000; }
 
         /* --- HEALTH BAR STYLES --- */
-        .health-bar-box {
-            background-color: rgba(0,0,0,0.5);
-            padding: 10px 15px;
-            border-radius: 10px;
-            border: 3px solid #333;
-            width: 27vw; 
-            margin-bottom: 5px;
-            margin-top: 25px;
-        }
+        .health-bar-box { background-color: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 10px; border: 3px solid #333; width: 27vw; margin-bottom: 5px; margin-top: 25px; }
         
-        .health-bar-top-row {
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            margin-bottom: 8px;
-            color: white;
-            font-size: 1.2rem; 
-            font-weight: bold;
-        }
+        .health-bar-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; color: white; font-size: 1.2rem; font-weight: bold; }
 
-        .health-bar-track {
-            width: 100%; 
-            height: 23px;
-            background-color: #555;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid white;
-        }
-        .health-bar-fill {
-            height: 100%;
-            width: 100%; 
-            background-color: #2ecc71; 
-            transition: width 0.5s ease;
-        }
+        .health-bar-track { width: 100%; height: 23px; background-color: #555; border-radius: 10px; overflow: hidden; border: 2px solid white; }
+        .health-bar-fill { height: 100%; width: 100%; background-color: #2ecc71; transition: width 0.5s ease; }
 
         .roll-text { opacity: 0; transition: opacity 0.5s; font-size: 0.8rem; color: white; }
 
@@ -425,6 +327,20 @@
             </div>
             <div class="hero-inner">
                 <h1 class="hero-title">Session Settings</h1>
+                
+                <div class="settings-box">
+                    <div class="settings-row">
+                        <div class="settings-label">Balls per encounter: <span id="ballThrowValue">1</span></div>
+                        <input type="range" id="ballThrowSlider" min="1" max="10" value="1" oninput="updateBallSettings()">
+                    </div>
+                    <div class="settings-row">
+                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                            <input type="checkbox" id="untilCaughtCheck" onchange="updateBallSettings()" style="transform: scale(1.5);">
+                            <span class="settings-label">Until it is Caught</span>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="checklist-wrapper">
                     <div class="checklist-controls">
                         <button class="btn-layered-small" onclick="toggleCheckboxes(true)"><span>Select All</span></button>
@@ -485,6 +401,23 @@
             <div class="hero-inner" style="padding-top: 80px;"> 
                 <h1 class="hero-title" style="margin-bottom: 30px;">Update Log</h1>
                 
+                <div class="version-header-container">
+                    <div class="version-title">version 1.0.1</div>
+                    <div class="trapezoid-wrapper">
+                        <div class="version-divider"></div>
+                        <div class="trapezoid-date">22/1/2026</div>
+                    </div>
+                </div>
+
+                <div class="log-scroll-area" style="height: auto; max-height: 40vh; margin-bottom: 20px;">
+                    <div class="log-item"><img src="Pokeball.png">Bug fix on catch rate calculator <a href="https://www.dragonflycave.com/mechanics/gen-viii-capturing/" target="_blank">Link</a></div>
+                    <div class="log-item"><img src="Pokeball.png">Bug fix on high speed double/triple catches using a pause appraoch</div>
+                    <div class="log-item"><img src="Pokeball.png">Added pokeball icons to the ending list</div>
+                    <div class="log-item"><img src="Pokeball.png">Added delay after pokemon was caught (2s -->4s)</div>
+                    <div class="log-item"><img src="Pokeball.png">Added variable pokeballs thrown and option to keep throwing until it is caught</div>
+                    <div class="log-item"><img src="Pokeball.png"><i>Added mystery guest?</i></div>
+                </div>
+
                 <div class="version-header-container">
                     <div class="version-title">version 1.0.0</div>
                     <div class="trapezoid-wrapper">
@@ -904,6 +837,48 @@
             }
         }
 
+        // NEW SETTINGS FUNCTIONALITY
+        let maxBallsToThrow = 1;
+        let throwUntilCaught = false;
+
+        function updateBallSettings() {
+            const slider = document.getElementById('ballThrowSlider');
+            const check = document.getElementById('untilCaughtCheck');
+            
+            maxBallsToThrow = parseInt(slider.value);
+            throwUntilCaught = check.checked;
+            
+            document.getElementById('ballThrowValue').innerText = maxBallsToThrow;
+            
+            // Disable slider if checked
+            if (throwUntilCaught) {
+                slider.disabled = true;
+                slider.style.opacity = 0.5;
+            } else {
+                slider.disabled = false;
+                slider.style.opacity = 1;
+            }
+            
+            localStorage.setItem('maxBalls', maxBallsToThrow);
+            localStorage.setItem('untilCaught', throwUntilCaught);
+        }
+
+        function loadBallSettings() {
+            const savedBalls = localStorage.getItem('maxBalls');
+            const savedUntil = localStorage.getItem('untilCaught');
+            
+            if (savedBalls) {
+                maxBallsToThrow = parseInt(savedBalls);
+                document.getElementById('ballThrowSlider').value = maxBallsToThrow;
+                document.getElementById('ballThrowValue').innerText = maxBallsToThrow;
+            }
+            if (savedUntil === 'true') {
+                throwUntilCaught = true;
+                document.getElementById('untilCaughtCheck').checked = true;
+            }
+            updateBallSettings(); // Refresh UI state
+        }
+
         function checkAdminPassword(val) {
             const slider = document.getElementById('shinySlider');
             const speedSlider = document.getElementById('speedSlider');
@@ -954,10 +929,12 @@
         let gameInterval = null;
         let gameSecondsRemaining = 0;
         let isPaused = false;
+        let isLoading = false; // High Speed Fix
         let validPokemonIds = [];
         let typewriterInterval = null; 
         let caughtPokemonList = []; 
-        let currentBallIndex = 0; // GLOBAL BALL INDEX
+        let currentBallIndex = 0; 
+        let isFirstEncounter = true; // NEW FLAG for MissingNo
 
         // Encounter Variables
         let encounterSeconds = 0;
@@ -966,7 +943,11 @@
         let currentLevel = 1; 
         let isShiny = false;
         let transitionPending = false;
+        let transitionDelayCounter = 0; 
         
+        // NEW THROW LOGIC VARIABLES
+        let currentThrowCount = 0;
+
         let endConfirmState = false;
         let endConfirmTimeout = null; 
 
@@ -1008,6 +989,9 @@
             document.getElementById('btnPause').style.color = "#f1c40f";
             updateGameTimerDisplay();
             
+            transitionDelayCounter = 0;
+            isFirstEncounter = true; // Reset Mystery Guest Flag
+            
             runGameCycle(); 
             if (gameInterval) clearInterval(gameInterval);
             
@@ -1021,7 +1005,7 @@
             switchView('view-home');
         }
 
-        // NEW FUNCTION: BACK BUTTON
+        // BACK BUTTON
         function stopGameAndToSettings() {
             clearInterval(gameInterval);
             clearInterval(typewriterInterval); 
@@ -1063,12 +1047,30 @@
             } else {
                 caughtPokemonList.forEach(p => {
                     const item = document.createElement('div');
+                    item.style.display = 'flex'; // Need flex to align icon and text
+                    item.style.alignItems = 'center';
+                    item.style.marginBottom = '10px';
+
+                    // 1. Create Ball Icon (Matching the style of the sidebar list)
+                    const ballImg = document.createElement('img');
+                    const ballNames = ['Pokeball.png', 'Greatball.png', 'Ultraball.png', 'Masterball.png'];
+                    ballImg.src = ballNames[p.ballIdx];
+                    ballImg.style.width = '3em'; 
+                    ballImg.style.height = '3em';
+                    ballImg.style.marginRight = '8px';
+                    ballImg.style.imageRendering = 'pixelated';
+
+                    // 2. Create Text
+                    const textSpan = document.createElement('span');
                     let displayString = `Lv. ${p.level} ${p.name}`;
                     if (p.name.includes('★')) {
-                        item.innerHTML = displayString.replace('★', '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>');
+                        textSpan.innerHTML = displayString.replace('★', '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>');
                     } else {
-                        item.innerText = displayString;
+                        textSpan.innerText = displayString;
                     }
+
+                    item.appendChild(ballImg);
+                    item.appendChild(textSpan);
                     endList.appendChild(item);
                 });
             }
@@ -1083,10 +1085,11 @@
             btn.style.color = isPaused ? "#2ecc71" : "#f1c40f";
         }
 
-        // --- REVISED GAME TICK ---
+        // --- REVISED GAME TICK WITH NEW LOGIC ---
         function gameTick() {
-            if (isPaused) return;
+            if (isPaused || isLoading) return;
 
+            // 1. Session Timer Logic
             if (gameSecondsRemaining > 0) {
                 gameSecondsRemaining--; 
                 updateGameTimerDisplay();
@@ -1095,32 +1098,51 @@
                 return;
             }
 
+            // 2. Transition Delay Logic (Post-Catch or Post-Flee)
             if (transitionPending) {
-                runGameCycle();
-                transitionPending = false;
-                return;
+                if (transitionDelayCounter > 0) {
+                    transitionDelayCounter--; 
+                    return; 
+                } else {
+                    runGameCycle();
+                    return;
+                }
             }
 
+            // 3. Encounter Logic
             encounterSeconds++;
 
-            if (encounterSeconds % 2 === 0) {
-                if (encounterSeconds >= 2 && encounterSeconds < 18) {
-                    let caught = Math.random() < currentFinalChance;
-                    let displayName = currentPokemonName + (isShiny ? " ★" : "");
+            // Wait 2 seconds (Tick 0, Tick 1) before doing anything
+            if (encounterSeconds < 2) return;
 
-                    if (caught) {
-                        startTypewriter(`Gotcha! The wild ${displayName} was caught!`);
-                        transitionPending = true;
-                        
-                        addCaughtPokemon(displayName, currentLevel, currentBallIndex);
-                    } else {
-                        startTypewriter(`Oh no! The wild ${displayName} broke free!`);
-                    }
-                } 
-                else if (encounterSeconds === 18) {
-                    let displayName = currentPokemonName + (isShiny ? " ★" : "");
-                    startTypewriter(`Oh no! The wild ${displayName} fled!`);
+            // Throw Logic: Every 2 ticks (even seconds)
+            if (encounterSeconds % 2 === 0) {
+                let displayName = currentPokemonName + (isShiny ? " ★" : "");
+                
+                // Roll for Catch
+                let caught = Math.random() < currentFinalChance;
+
+                if (caught) {
+                    startTypewriter(`Gotcha! The wild ${displayName} was caught!`);
                     transitionPending = true;
+                    transitionDelayCounter = 4; // UPDATED: Wait 4s after catch
+                    addCaughtPokemon(displayName, currentLevel, currentBallIndex);
+                } else {
+                    currentThrowCount++;
+                    startTypewriter(`Oh no! The wild ${displayName} broke free!`);
+                    
+                    // Check Fail Condition
+                    // If NOT unlimited AND we hit max throws -> Flee
+                    if (!throwUntilCaught && currentThrowCount >= maxBallsToThrow) {
+                        // Delay the flee message slightly
+                        setTimeout(() => {
+                             if(!isPaused && !isLoading && !transitionPending) {
+                                startTypewriter(`Wild ${displayName} fled!`);
+                                transitionPending = true;
+                                transitionDelayCounter = 4; // UPDATED: Wait 4s after flee
+                             }
+                        }, gameTickIntervalTime); // Show "Fled" after 1 tick
+                    }
                 }
             }
         }
@@ -1137,7 +1159,7 @@
             const ballImg = document.createElement('img');
             const ballNames = ['Pokeball.png', 'Greatball.png', 'Ultraball.png', 'Masterball.png'];
             ballImg.src = ballNames[ballIdx];
-            ballImg.style.width = '3em'; // Increased to 3x text size
+            ballImg.style.width = '3em'; 
             ballImg.style.height = '3em';
             ballImg.style.marginRight = '8px';
             ballImg.style.imageRendering = 'pixelated';
@@ -1193,12 +1215,10 @@
 
         function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
-        // NEW FORMATTING FUNCTION
         function formatPokemonName(slug) {
             const parts = slug.split('-');
             const base = capitalize(parts[0]);
 
-            // Check for specific forms to keep
             if (parts.includes('mega')) return `Mega ${base}`;
             if (parts.includes('primal')) return `Primal ${base}`;
             if (parts.includes('alola')) return `Alolan ${base}`;
@@ -1208,27 +1228,27 @@
             if (parts.includes('gmax')) return `Gigantamax ${base}`;
             if (parts.includes('eternamax')) return `Eternamax ${base}`;
             
-            // New formats
             if (slug.includes('pompom')) return `Oricorio Pom Pom`;
             if (slug.includes('duskmane')) return `Necrozma Dusk Mane`;
             if (slug.includes('dawnwings')) return `Necrozma Dawn Wings`;
 
-            // ALCREMIE FORMATTING
             if (slug.startsWith('alcremie-') && !slug.includes('gmax')) {
-                 // Format: alcremie-ruby-cream-berry -> Alcremie Ruby Cream Berry
                  return slug.split('-').map(capitalize).join(' ');
             }
 
-            // If none of the above, return the Clean Base Name
             return base;
         }
 
         async function runGameCycle() {
-            // FIX: Clear interval immediately to stop previous text overlap
+            // 1. Lock game loop
+            isLoading = true;
+
             if (typewriterInterval) clearInterval(typewriterInterval);
 
             encounterSeconds = 0;
+            currentThrowCount = 0; // Reset throws for new encounter
             transitionPending = false;
+            transitionDelayCounter = 0;
 
             const imgElement = document.getElementById('pokemonSprite');
             const textBox = document.getElementById('gameTextBox');
@@ -1238,12 +1258,74 @@
             const healthBarUI = document.getElementById('healthBarUI');
 
             imgElement.style.display = 'none';
-            textBox.innerHTML = "";
+            textBox.innerHTML = "Searching for Pokemon..."; 
             statusText.style.opacity = 0;
             catchDisplay.innerText = "";
             selector.style.display = 'none';
             healthBarUI.style.display = 'none'; 
             document.querySelectorAll('.poke-icon').forEach(icon => icon.classList.remove('active'));
+
+            // CHECK MYSTERY GUEST CONDITION
+            const now = new Date();
+            const isMidnight = (now.getHours() === 0 && now.getMinutes() === 0);
+
+            if (isFirstEncounter && isMidnight) {
+                // --- MISSINGNO LOGIC ---
+                isFirstEncounter = false;
+                
+                currentPokemonName = "MissingNo.";
+                isShiny = false; // or random, but prompt says use missingno.png for both
+                
+                // Force Image
+                imgElement.src = "missingno.png";
+                imgElement.style.display = 'block';
+
+                // Setup Dummy Stats
+                currentLevel = Math.floor(Math.random() * 100) + 1;
+                const hpMax = 33; // Arbitrary
+                let hpCurrent = hpMax; 
+                let hpColor = "#2ecc71"; 
+                let barWidth = "100%"; 
+                let barColor = "#2ecc71";
+
+                // Setup UI
+                const hbName = document.getElementById('hbName');
+                hbName.innerHTML = currentPokemonName;
+                document.getElementById('hbLevel').innerText = "Lv. " + currentLevel;
+                document.getElementById('hbFill').style.width = barWidth;
+                document.getElementById('hbFill').style.backgroundColor = barColor;
+                healthBarUI.style.display = 'block';
+
+                // Status (None)
+                statusText.innerText = "No Status"; statusText.style.color = "#ecf0f1"; statusText.style.opacity = 1;
+
+                // Balls (Random logic similar to normal)
+                let bonusBall;
+                const rBall = Math.random();
+                if (rBall < 0.50) { bonusBall = 1.0; currentBallIndex = 0; } 
+                else if (rBall < 0.80) { bonusBall = 1.5; currentBallIndex = 1; } 
+                else if (rBall < 0.95) { bonusBall = 2.0; currentBallIndex = 2; } 
+                else { bonusBall = 255; currentBallIndex = 3; } 
+
+                const ballIcon = document.getElementById(`ball-${currentBallIndex}`);
+                if (ballIcon) {
+                    ballIcon.classList.add('active');
+                    selector.style.display = 'block';
+                    selector.style.top = (ballIcon.offsetTop + 6) + 'px'; 
+                }
+
+                // FORCE 100% CATCH
+                currentFinalChance = 1.0;
+                catchDisplay.innerText = `Catch Chance: 100.000%`;
+
+                startTypewriter(`Wild MissingNo. appeared!`);
+                
+                isLoading = false;
+                return; // SKIP REST OF FUNCTION
+            }
+
+            // --- NORMAL LOGIC IF NOT MISSINGNO ---
+            isFirstEncounter = false; // Ensure flag is off
 
             const randomIndex = Math.floor(Math.random() * validPokemonIds.length);
             const randomId = validPokemonIds[randomIndex];
@@ -1256,10 +1338,7 @@
                 const pokeData = await pokemonRes.json();
                 const speciesData = await speciesRes.json();
 
-                // 1. Determine base name
                 let apiName = pokeData.name;
-
-                // 2. Logic for Sprite Slug (Variants > Fixes > Default)
                 let spriteSlug = apiName;
 
                 if (VARIANT_MAP[randomId]) {
@@ -1269,7 +1348,6 @@
                     spriteSlug = FIX_MAP[randomId];
                 }
 
-                // 3. Format Display Name
                 currentPokemonName = formatPokemonName(spriteSlug);
 
                 const hpMax = pokeData.stats[0].base_stat; 
@@ -1278,7 +1356,6 @@
                 const shinyRoll = Math.floor(Math.random() * shinyOdds) + 1;
                 isShiny = (shinyRoll === 1);
                 
-                // Shiny Handling
                 const folder = isShiny ? 'ani-shiny' : 'ani';
 
                 imgElement.src = `https://play.pokemonshowdown.com/sprites/${folder}/${spriteSlug}.gif`;
@@ -1301,7 +1378,6 @@
                     barWidth = "5%"; barColor = "#e74c3c"; 
                 } 
 
-                // --- SHINY STAR ON HEALTH BAR NAME ---
                 const hbName = document.getElementById('hbName');
                 hbName.innerHTML = currentPokemonName;
                 if (isShiny) {
@@ -1314,7 +1390,6 @@
                 healthBarUI.style.display = 'block'; 
 
                 let bonusBall;
-                // Removed local let ballIndex declaration
                 const rBall = Math.random();
                 if (rBall < 0.50) { bonusBall = 1.0; currentBallIndex = 0; } 
                 else if (rBall < 0.80) { bonusBall = 1.5; currentBallIndex = 1; } 
@@ -1345,8 +1420,13 @@
                     currentFinalChance = 1.0; 
                 } else {
                     const a = ((3 * hpMax - 2 * hpCurrent) / (3 * hpMax)) * catchRate * bonusBall * bonusStatus * bonusLevel;
-                    if (a >= 255) currentFinalChance = 1.0;
-                    else currentFinalChance = Math.pow(a / 255, 3);
+                    // GEN 8 FORMULA
+                    if (a >= 255) {
+                        currentFinalChance = 1.0;
+                    } else {
+                        const b = Math.floor(65536 / Math.pow(255 / a, 0.1875));
+                        currentFinalChance = Math.pow(b / 65536, 4);
+                    }
                 }
 
                 catchDisplay.innerText = `Catch Chance: ${(currentFinalChance * 100).toFixed(3)}%`;
@@ -1357,18 +1437,20 @@
             } catch (error) {
                 console.log("Error", error);
                 runGameCycle(); 
+                return;
             }
+
+            // Unlock game loop
+            isLoading = false; 
         }
         
         document.getElementById('pokemonSprite').onerror = function() { this.style.display = 'none'; };
 
         window.onload = function() {
             if(localStorage.getItem('mySavedTimer')) { configMinutes = parseInt(localStorage.getItem('mySavedTimer')); updateConfigDisplay(); }
-            setupChecklist(); initShinySlider(); updateMainClock();
+            setupChecklist(); initShinySlider(); loadBallSettings(); updateMainClock();
         };
     </script>
 </body>
 
 </html>
-
-
