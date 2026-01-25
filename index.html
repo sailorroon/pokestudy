@@ -3,23 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeStudy</title>
+    <meta name="description" content="PokéStudy: A productivity companion combining a focus timer with an interactive Pokémon catching simulator and Pokédex tracker.">
+    <title>PokéStudy - Focus & Catch</title>
     
     <link rel="icon" href="Duskball.png" type="image/png">
-    
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <style>
-        /* --- GENERAL STYLES --- */
-        body, html { margin: 0; padding: 0; font-family: Arial, sans-serif; height: 100%; background-color: #000; overflow: hidden; }
-        
-        .main-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; opacity: 0; visibility: hidden; transition: opacity 0.6s, visibility 0.6s; z-index: 1; }
-        .active-view { opacity: 1; visibility: visible; z-index: 10; }
+        /* ==========================================================================
+           SECTION 1: CORE STYLES & RESET
+           Handles basic page layout, typography, and view management (SPA feel).
+           ========================================================================== */
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Press Start 2P', cursive; 
+            height: 100%; 
+            background-color: #000; 
+            overflow: hidden; 
+        }
 
-        .top-content { min-height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; padding-bottom: 180px; }
+        /* Overrides specific text elements to use Arial for better readability */
+        .info-box, .info-box p, .info-box h2, .disclaimer-text, .admin-input { 
+            font-family: Arial, sans-serif !important; 
+        }
 
-        /* --- BACKGROUNDS --- */
+        /* View Container: Controls the Single Page Application (SPA) switching logic */
+        .main-view { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow-y: auto; 
+            opacity: 0; 
+            visibility: hidden; 
+            transition: opacity 0.6s, visibility 0.6s; 
+            z-index: 1; 
+        }
+
+        .active-view { 
+            opacity: 1; 
+            visibility: visible; 
+            z-index: 10; 
+        }
+
+        /* ==========================================================================
+           SECTION 2: LAYOUT COMPONENT CLASSES
+           Reusable classes for centering content, hero sections, and info boxes.
+           ========================================================================== */
+        .top-content { 
+            min-height: 100vh; 
+            width: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            position: relative; 
+            padding-bottom: 180px; 
+        }
+
+        .hero-inner { 
+            z-index: 10; 
+            width: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 25px; 
+            padding-bottom: 100px; 
+            padding-top: 100px; 
+        }
+
+        .hero-title { 
+            font-size: 3rem; 
+            margin: 0; 
+            text-shadow: 2px 2px 4px #000; 
+            line-height: 1.5; 
+        }
+
+        .hero-subtitle { 
+            font-size: 0.8rem; 
+            max-width: 800px; 
+            margin: 0; 
+            text-shadow: 1px 1px 2px #000; 
+            color: #f0f0f0; 
+            line-height: 1.8; 
+        }
+
+        .common-section-two { 
+            padding: 80px 20px; 
+            background-color: #fff; 
+            color: #333; 
+            text-align: center; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 40vh; 
+        }
+
+        .info-box { max-width: 700px; text-align: left; }
+        .info-box h2 { font-size: 2.5rem; margin-bottom: 20px; text-align: center; } 
+        .info-box p { font-size: 1.1rem; line-height: 1.6; color: #666; margin-bottom: 25px; } 
+        .disclaimer-text { color: #cc0000; font-weight: bold; text-align: center; font-size: 0.9rem; line-height: 1.4; border-top: 1px solid #eee; padding-top: 15px; text-transform: uppercase; }
+
+        /* ==========================================================================
+           SECTION 3: BACKGROUNDS & VISUAL ASSETS
+           Specific backgrounds for different views and geometric decorations.
+           ========================================================================== */
         .hero-bg { background-color: #cc0000; color: white; }
 
         .page-1-bg { 
@@ -30,274 +122,281 @@
             color: white; 
         }
 
-        .page-2-bg { background-color: #582A70; color: white; }
-        
-        /* GREAT BALL THEME BACKGROUND */
-        .page-log-bg { 
-            background-color: #2B6F9C; /* Great Ball Blue */
-            background-image: linear-gradient(to right, #e74c3c 33.33%, transparent 33.33%, transparent 66.66%, #e74c3c 66.66%);
-            background-size: 100% 20%; 
-            background-position: center;
-            background-repeat: no-repeat;
+        .page-2-bg { 
+            background-color: #512da8; 
             color: white; 
+            position: relative;
+            overflow: hidden;
         }
-        .game-bg { background-size: cover; background-position: center; background-attachment: fixed; color: white; transition: background-image 1s ease-in-out; }
+
+        .page-log-bg { 
+            background-color: #2B6F9C; 
+            background-image: linear-gradient(to right, #e74c3c 33.33%, transparent 33.33%, transparent 66.66%, #e74c3c 66.66%);
+            background-size: 100% 20%; background-position: center; background-repeat: no-repeat; color: white; 
+        }
+
+        .game-bg { 
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; 
+            color: white; 
+            transition: background-image 1s ease-in-out; 
+        }
         
-        .hero-bg::before, .game-bg::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.1); z-index: 0; }
-        .hero-inner { z-index: 1; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 25px; padding-bottom: 100px; }
+        .hero-bg::before, .game-bg::before { 
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.1); z-index: 0; 
+        }
 
-        .hero-title { font-size: 4rem; margin: 0; text-shadow: 2px 2px 4px #000; }
-        .hero-subtitle { font-size: 1.2rem; max-width: 800px; margin: 0; text-shadow: 1px 1px 2px #000; color: #f0f0f0; line-height: 1.8; }
+        /* Decorative Geometry Elements */
+        .decoration-wrapper { position: absolute; bottom: 0; left: 0; width: 100%; height: 180px; z-index: 5; background: linear-gradient(to bottom, transparent 50%, #ffffff 50%); }
+        .geo-rectangle { position: absolute; width: 100%; height: 45px; background-color: #404040; z-index: 1; top: 50%; left: 0; transform: translateY(-50%); }
+        .geo-circle-outer { position: absolute; width: 135px; height: 135px; border-radius: 50%; background-color: #404040; z-index: 2; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .geo-circle-inner { position: absolute; width: 90px; height: 90px; border-radius: 50%; background-color: #fff; z-index: 3; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-        /* --- BUTTONS --- */
-        .button-container { display: flex; gap: 20px; justify-content: center; align-items: center; }
+        /* Masterball Decorative Art */
+        .mb-corner-left { position: absolute; top: 0; left: 0; width: 20vw; height: 20vw; background-color: #d81b60; border-bottom-right-radius: 100%; z-index: 1; }
+        .mb-corner-right { position: absolute; top: 0; right: 0; width: 20vw; height: 20vw; background-color: #d81b60; border-bottom-left-radius: 100%; z-index: 1; }
+        .mb-letter { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-family: 'Arial Black', 'Impact', sans-serif; font-weight: 900; font-size: 25vw; color: white; z-index: 1; user-select: none; line-height: 1; }
+
+        /* ==========================================================================
+           SECTION 4: NAVIGATION BAR
+           Styles for the top navigation tabs and hover dropdowns.
+           ========================================================================== */
+        .main-nav { position: absolute; top: 0; left: 0; width: 100%; display: flex; justify-content: flex-start; padding-left: 20px; padding-top: 20px; z-index: 100; box-sizing: border-box; }
+        .nav-item { position: relative; margin-right: 20px; cursor: pointer; }
+        .nav-tab-shape { padding: 10px 20px; color: white; font-size: 0.8rem; text-shadow: 2px 2px 0 #000; border-radius: 5px; transition: background-color 0.2s, transform 0.2s; background-color: transparent; }
+        
+        /* Active State / Hover State */
+        .nav-item:hover .nav-tab-shape, .nav-item.active .nav-tab-shape { background-color: rgba(200, 200, 200, 0.3); transform: scale(1.05); }
+        
+        .nav-dropdown { position: absolute; top: 45px; left: 0; opacity: 0; visibility: hidden; width: 250px; height: 140px; background-size: 60%; background-repeat: no-repeat; background-position: center; background-color: rgba(20, 20, 20, 0.95); border: 3px solid #f1c40f; border-radius: 15px; display: flex; justify-content: center; align-items: center; padding: 15px; text-align: center; transition: all 0.3s ease; z-index: 101; transform: translateY(-10px); }
+        .nav-dropdown::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); border-radius: 12px; z-index: 1; }
+        .nav-dropdown p { color: white; font-weight: bold; text-shadow: 0 2px 4px #000; font-size: 0.7rem; line-height: 1.4; position: relative; z-index: 2; margin: 0; }
+        .nav-item:hover .nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+
+        /* ==========================================================================
+           SECTION 5: BUTTONS & INTERACTIVE ELEMENTS
+           Styles for game controls, menu buttons, and setting toggles.
+           ========================================================================== */
         .btn-layered { background-color: #404040; border: none; border-radius: 50px; padding: 6px; cursor: pointer; transition: transform 0.2s; display: inline-block; text-decoration: none; }
-        .btn-layered span { display: block; background-color: white; color: #333; font-size: 1.2rem; font-weight: bold; padding: 12px 35px; border-radius: 44px; }
+        .btn-layered span { display: block; background-color: white; color: #333; font-size: 1rem; font-weight: bold; padding: 12px 35px; border-radius: 44px; font-family: 'Press Start 2P', cursive; }
         .btn-layered:hover { transform: scale(1.05); }
 
         .btn-layered-small { background-color: #404040; border: none; border-radius: 50px; padding: 4px; cursor: pointer; transition: transform 0.2s; margin: 0 5px; }
-        .btn-layered-small span { display: block; background-color: white; color: #333; font-size: 0.9rem; font-weight: bold; padding: 8px 20px; border-radius: 44px; }
+        .btn-layered-small span { display: block; background-color: white; color: #333; font-size: 0.6rem; font-weight: bold; padding: 8px 20px; border-radius: 44px; font-family: 'Press Start 2P', cursive; }
         .btn-layered-small:hover { transform: scale(1.05); }
 
-        /* FLOATING ACTION BUTTONS */
-        .btn-float-back { position: absolute; top: 40px; left: 40px; font-size: 1.2rem; color: rgba(255, 255, 255, 0.8); background: none; border: none; cursor: pointer; font-weight: bold; transition: transform 0.2s, color 0.2s; z-index: 30; }
-        .btn-float-back:hover { transform: scale(1.1); color: white; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        /* Floating Game Buttons */
+        .btn-float-pause, .btn-float-end, .btn-float-back-game { 
+            position: absolute; left: 40px; font-size: 1rem; background: none; border: none; cursor: pointer; font-family: 'Press Start 2P', cursive; transition: transform 0.2s, color 0.2s; z-index: 30; 
+        }
+        .btn-float-pause { top: 80px; color: #f1c40f; }
+        .btn-float-end { top: 120px; color: #e74c3c; }
+        .btn-float-back-game { top: 40px; color: rgba(255, 255, 255, 0.8); }
+        
+        .btn-float-pause:hover, .btn-float-end:hover { transform: scale(1.1); color: #fff; }
+        .btn-float-back-game:hover { transform: scale(1.1); color: white; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-        .btn-float-pause { position: absolute; top: 80px; left: 40px; font-size: 1.2rem; color: #f1c40f; background: none; border: none; cursor: pointer; font-weight: bold; transition: transform 0.2s, color 0.2s; z-index: 30; }
-        .btn-float-pause:hover { transform: scale(1.1); color: #fff; }
-
-        .btn-float-end { position: absolute; top: 120px; left: 40px; font-size: 1.2rem; color: #e74c3c; background: none; border: none; cursor: pointer; font-weight: bold; transition: transform 0.2s, color 0.2s; z-index: 30; }
-        .btn-float-end:hover { transform: scale(1.1); color: #fff; }
-
-        /* --- CLOCK & TIMER --- */
-        .clock-container { position: absolute; bottom: 190px; left: 50%; transform: translateX(-50%); font-size: 3rem; font-family: 'Courier New', Courier, monospace; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); z-index: 6; }
+        /* ==========================================================================
+           SECTION 6: SETTINGS, TIMERS & ADMIN UI
+           Components for the "Start" page and hidden admin panels.
+           ========================================================================== */
+        .clock-container { position: absolute; bottom: 190px; left: 50%; transform: translateX(-50%); font-size: 2rem; font-family: 'Press Start 2P', cursive; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); z-index: 6; }
+        
         .timer-group { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .timer-wrapper { display: flex; align-items: center; gap: 15px; background: rgba(0, 0, 0, 0.6); padding: 15px 30px; border-radius: 50px; font-family: 'Courier New', Courier, monospace; }
-        .timer-display { font-size: 2.5rem; font-weight: bold; min-width: 200px; text-align: center; }
-        .timer-btn { background: none; border: 2px solid rgba(255,255,255,0.3); color: white; font-size: 1.5rem; font-weight: bold; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
+        .timer-wrapper { display: flex; align-items: center; gap: 15px; background: rgba(0, 0, 0, 0.6); padding: 15px 30px; border-radius: 50px; }
+        .timer-display { font-size: 1.5rem; font-weight: bold; min-width: 200px; text-align: center; font-family: 'Press Start 2P', cursive; }
+        .timer-btn { background: none; border: 2px solid rgba(255,255,255,0.3); color: white; font-size: 1rem; font-weight: bold; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: background 0.2s; font-family: 'Press Start 2P', cursive; }
         .timer-btn:hover { background: rgba(255,255,255,0.2); }
 
-        /* --- CHECKLIST & SLIDER --- */
         .checklist-wrapper { background: rgba(0, 0, 0, 0.3); padding: 20px 40px; border-radius: 15px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; }
         .checklist-controls { display: flex; justify-content: center; width: 100%; gap: 10px; }
         .checklist-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 40px; text-align: left; }
-        .checklist-item { font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+        .checklist-item { font-size: 0.8rem; display: flex; align-items: center; gap: 10px; }
         .checklist-item input { transform: scale(1.5); cursor: pointer; }
 
-        /* --- NEW SETTINGS BOX (Balls) --- */
-        .settings-box { 
-            background: rgba(0, 0, 0, 0.3); 
-            padding: 15px 30px; 
-            border-radius: 15px; 
-            margin-bottom: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-            gap: 10px; 
-            color: white;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        .settings-box { background: rgba(0, 0, 0, 0.3); padding: 15px 30px; border-radius: 15px; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; color: white; border: 1px solid rgba(255,255,255,0.1); }
         .settings-row { display: flex; align-items: center; gap: 20px; }
-        .settings-label { font-size: 1.1rem; font-weight: bold; }
+        .settings-label { font-size: 0.8rem; font-weight: bold; }
 
-        /* ADMIN SLIDER WRAPPER */
-        .shiny-slider-wrapper { 
-            position: absolute; top: 40px; right: 40px; 
-            background: rgba(0, 0, 0, 0.6); padding: 20px; 
-            border-radius: 15px; display: flex; flex-direction: column; 
-            align-items: flex-end; gap: 10px; color: white; z-index: 20; 
-            text-align: right; border: 1px solid rgba(255,255,255,0.2); 
-        }
-        .shiny-slider-wrapper label { font-size: 1.1rem; font-weight: bold; color: #f1c40f; }
+        /* Admin Panels */
+        .admin-header-bar { width: 100%; display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px; }
+        .admin-minimize-btn { background: none; border: 2px solid white; color: white; font-family: 'Press Start 2P', cursive; cursor: pointer; padding: 2px 6px; font-size: 0.8rem; border-radius: 4px; }
+        .admin-minimize-btn:hover { background: rgba(255,255,255,0.2); }
+        .admin-content { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; transition: height 0.3s; overflow: hidden; }
+        .admin-minimized .admin-content { display: none; }
+
+        .shiny-slider-wrapper { position: absolute; top: 220px; right: 40px; background: rgba(0, 0, 0, 0.6); padding: 10px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: flex-end; color: white; z-index: 20; text-align: right; border: 1px solid rgba(255,255,255,0.2); }
+        .shiny-slider-wrapper label { font-size: 0.8rem; font-weight: bold; color: #f1c40f; }
         .shiny-slider-wrapper input[type=range] { width: 200px; cursor: pointer; }
         .shiny-slider-wrapper input[type=range]:disabled { opacity: 0.5; cursor: not-allowed; }
+        .admin-input { margin-top: 10px; padding: 5px; border-radius: 5px; border: 1px solid #ccc; font-family: Arial, sans-serif; font-size: 0.8rem; width: 150px; }
+        .speed-warning { display: none; color: #e74c3c; font-size: 0.6rem; margin-top: 5px; max-width: 200px; font-weight: bold; text-align: right; }
         
-        .admin-input {
-            margin-top: 10px; padding: 5px; border-radius: 5px; 
-            border: 1px solid #ccc; font-family: Arial, sans-serif;
-            font-size: 0.8rem; width: 150px;
+        .pokedex-admin-box { position: absolute; top: 120px; right: 40px; background: rgba(0,0,0,0.8); padding: 10px 15px; border-radius: 10px; border: 2px solid #e74c3c; display: flex; flex-direction: column; align-items: flex-end; z-index: 50; color: white; }
+        .pokedex-admin-controls { display: none; flex-direction: column; gap: 8px; margin-top: 5px; align-items: flex-end; }
+        .admin-btn-red { background-color: #c0392b; color: white; border: 2px solid white; padding: 5px 10px; font-family: 'Press Start 2P', cursive; font-size: 0.6rem; cursor: pointer; border-radius: 5px; }
+        .admin-btn-red:hover { background-color: #e74c3c; }
+
+        /* ==========================================================================
+           SECTION 7: POKÉDEX VIEW UI
+           Styles for the grid, details panel, and search.
+           ========================================================================== */
+        .pokedex-box-outer { width: 70vw; height: 72vh; background-color: #c0392b; border-radius: 15px; padding: 15px; box-shadow: 0 0 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; }
+        .pokedex-search-wrapper { width: 100%; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; box-sizing: border-box; }
+        .pokedex-search-input { width: 60%; padding: 10px 20px; border-radius: 30px; border: 3px solid #b71c1c; font-family: 'Press Start 2P', cursive; font-size: 0.8rem; text-align: center; outline: none; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2); }
+        .pokedex-search-input:focus { border-color: #f1c40f; }
+        .shiny-toggle-container { display: flex; align-items: center; gap: 15px; color: white; font-size: 0.8rem; cursor: pointer; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.1); }
+        .shiny-toggle-container input { transform: scale(2); cursor: pointer; }
+
+        .pokedex-box-inner { width: 100%; height: 100%; background-color: #e74c3c; border-radius: 10px; overflow: hidden; position: relative; border: 2px solid rgba(0,0,0,0.2); color: white; text-align: left; }
+        .pokedex-sub-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; padding: 20px; box-sizing: border-box; opacity: 0; visibility: hidden; transition: opacity 0.5s, visibility 0.5s; background-color: #e74c3c; }
+        .pokedex-sub-view.active-sub { opacity: 1; visibility: visible; z-index: 5; }
+        .pokedex-sub-view::-webkit-scrollbar { width: 12px; }
+        .pokedex-sub-view::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        .pokedex-sub-view::-webkit-scrollbar-thumb { background: #c0392b; border-radius: 10px; border: 2px solid #e74c3c; }
+
+        .pokedex-header { font-size: 1.2rem; margin-top: 50px; margin-bottom: 20px; text-shadow: 2px 2px 0 #000; text-align: left; padding-left: 10px; }
+        .pokedex-divider { width: calc(100% + 40px); margin-left: -20px; margin-right: -20px; height: 20px; background-color: #404040; margin-bottom: 40px; clip-path: polygon(0 0, 100% 0, calc(100% - 25px) 100%, 0 100%); }
+        .pokedex-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 25px; margin-bottom: 50px; padding: 0 40px; }
+        
+        .pokedex-btn { 
+            width: 100%; margin: 0 auto; aspect-ratio: 1 / 1.2; 
+            background-color: #7f8c8d; border: 2px solid rgba(0,0,0,0.1); border-radius: 8px; 
+            cursor: pointer; padding: 10px 5px; 
+            display: flex; flex-direction: column; align-items: center; 
+            transition: transform 0.1s, background-color 0.1s; 
+            box-sizing: border-box; overflow: hidden; 
+        }
+        .pokedex-btn:hover { transform: scale(1.1); background-color: rgba(255,255,255,0.3); z-index: 2; }
+        .pokedex-btn-title { font-size: 0.5rem; margin-bottom: 8px; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(255,255,255,0.9); line-height: 1.5; }
+        .pokedex-btn img { width: 100%; flex-grow: 1; object-fit: contain; image-rendering: pixelated; }
+        .highlight-pokemon { background-color: #f1c40f !important; box-shadow: 0 0 15px #f1c40f; transform: scale(1.1); }
+
+        /* Pokedex Detail View */
+        .detail-layout { display: flex; height: 100%; gap: 30px; padding: 10px; box-sizing: border-box; margin-top: 60px; }
+        .detail-left { width: calc(70vw / 3); height: auto; min-height: calc(70vw / 3); display: flex; flex-direction: column; justify-content: flex-start; align-items: center; background: rgba(0,0,0,0.1); border-radius: 15px; border: 3px solid #c0392b; flex-shrink: 0; padding: 20px; }
+        .detail-right { flex-grow: 1; overflow-y: auto; padding-right: 15px; margin-top: 10px; }
+        .detail-large-img { width: 100%; height: auto; image-rendering: pixelated; margin-bottom: 10px; }
+        .detail-arrows { display: flex; justify-content: center; align-items: center; gap: 20px; width: 100%; margin-top: 10px; }
+        .arrow-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; transition: transform 0.1s; text-shadow: 2px 2px 0 #000; font-family: 'Press Start 2P', cursive; }
+        .arrow-btn:hover { color: #f1c40f; transform: scale(1.2); }
+        .form-label { font-size: 0.7rem; color: #ccc; margin-top: 5px; text-align: center; height: 1em; }
+        
+        .detail-flavor-text {
+            margin-top: 45px;            
+            font-size: 0.6rem;           
+            line-height: 1.8;            
+            color: white;                
+            text-align: justify;         
+            width: 100%;                 
+            box-sizing: border-box;
+            text-shadow: 1px 1px 0 #000; 
+            padding: 0 10px;             
+            font-family: 'Press Start 2P', cursive;
         }
 
-        .speed-warning {
-            display: none; 
-            color: #e74c3c; 
-            font-size: 0.7rem; 
-            margin-top: 5px; 
-            max-width: 200px;
-            font-weight: bold;
-            text-align: right;
+        .history-item { background: rgba(255,255,255,0.05); margin-bottom: 25px; padding: 15px; border-radius: 10px; border-bottom: 3px solid rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 10px; }
+        .history-header-line { display: flex; align-items: center; gap: 10px; font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-ball { width: 2em; height: 2em; image-rendering: pixelated; }
+        .history-gif-row { display: flex; justify-content: flex-end; width: 100%; }
+        .history-gif { width: 35vw; height: auto; image-rendering: pixelated; filter: drop-shadow(0 0 5px rgba(0,0,0,0.3)); }
+        .btn-detail-back { position: absolute; top: 15px; left: 15px; z-index: 20; background: #404040; color: white; border: none; padding: 8px 15px; font-size: 0.7rem; cursor: pointer; border-radius: 5px; transition: transform 0.1s; font-family: 'Press Start 2P', cursive; }
+        .btn-detail-back:hover { transform: scale(1.1); background: #333; }
+
+        /* Secret Image Rendering Fix (for non-pixelated assets) */
+        .secret-render {
+            object-fit: contain !important;
+            width: 80% !important;
+            height: 80% !important;
+            image-rendering: auto !important;
         }
 
-        /* --- UPDATE LOG STYLE --- */
-        .version-header-container { width: 75vw; display: flex; flex-direction: column; align-items: flex-start; margin-top: 20px; }
-        .version-title { font-size: 3rem; font-weight: bold; font-style: italic; color: black; margin: 0; text-shadow: none; }
-        .trapezoid-wrapper { position: relative; width: 100%; height: 25px; margin-top: 5px; margin-bottom: 20px; }
-        .version-divider { width: 100%; height: 100%; background-color: #404040; clip-path: polygon(0 0, 100% 0, calc(100% - 25px) 100%, 0 100%); }
-        .trapezoid-date { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: #ccc; font-weight: bold; }
-        
-        .log-scroll-area { width: 80vw; height: 50vh; overflow-y: auto; text-align: left; padding-left: 12.5vw; box-sizing: border-box; }
-        .log-scroll-area::-webkit-scrollbar { width: 8px; }
-        .log-scroll-area::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-        .log-scroll-area::-webkit-scrollbar-thumb { background: #888; }
-
-        .log-item { font-size: 1.2rem; color: white; margin-bottom: 12px; text-shadow: 1px 1px 2px #000; line-height: 1.4; display: flex; align-items: center; }
-        .log-item img { width: 3em; height: 3em; margin-right: 15px; image-rendering: pixelated; flex-shrink: 0; }
-        .log-item a { color: #f1c40f; text-decoration: underline; }
-        .log-item a:hover { color: white; }
-
-        /* --- GAME PAGE --- */
-        .game-countdown { position: absolute; top: 40px; right: 40px; font-family: 'Courier New', Courier, monospace; font-size: 2.5rem; font-weight: bold; color: white; text-shadow: 0 0 10px rgba(255,0,0,0.7); z-index: 20; }
-        
-        .catch-rate-display { position: absolute; top: 90px; right: 40px; font-family: 'Courier New', Courier, monospace; font-size: 1.2rem; font-weight: bold; color: #2ecc71; text-shadow: 1px 1px 2px #000; z-index: 20; }
-
+        /* ==========================================================================
+           SECTION 8: GAME SIMULATOR UI
+           Styles for the battle screen, sprites, health bars, and animations.
+           ========================================================================== */
+        .game-countdown { position: absolute; top: 40px; right: 40px; font-family: 'Press Start 2P', cursive; font-size: 1.5rem; font-weight: bold; color: white; text-shadow: 0 0 10px rgba(255,0,0,0.7); z-index: 20; }
+        .catch-rate-display { position: absolute; top: 90px; right: 40px; font-family: 'Press Start 2P', cursive; font-size: 0.8rem; font-weight: bold; color: #2ecc71; text-shadow: 1px 1px 2px #000; z-index: 20; }
         .battle-ring { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(90px + 20vh + 10px); width: 33.33vw; height: auto; z-index: 10; image-rendering: pixelated; }
-        
         .pokemon-display { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(90px + 20vh + 50px); display: flex; justify-content: center; align-items: flex-end; z-index: 20; pointer-events: none; }
-        
         .pokemon-gif { height: 50vh; width: auto; image-rendering: pixelated; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
-
-        .game-textbox-container { 
-            position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); 
-            width: 80%; height: 20vh; z-index: 20; 
-            background-color: white; border: 8px solid black; border-radius: 8px; 
-            display: flex; align-items: center; justify-content: flex-start; 
-            padding: 20px 50px; box-sizing: border-box; 
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.5); 
-        }
-
+        
+        .game-textbox-container { position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); width: 80%; height: 20vh; z-index: 20; background-color: white; border: 8px solid black; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start; padding: 20px 50px; box-sizing: border-box; box-shadow: 5px 5px 0px rgba(0,0,0,0.5); }
         .textbox-triangle { position: absolute; bottom: 15px; right: 20px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 15px solid #e74c3c; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-        .game-text { font-family: 'Press Start 2P', 'Courier New', monospace; font-size: 2.4rem; line-height: 1.4; color: black; text-align: left; width: 100%; white-space: pre-wrap; margin: 0; }
-
+        .game-text { font-family: 'Press Start 2P', monospace; font-size: 1.2rem; line-height: 1.4; color: black; text-align: left; width: 100%; white-space: pre-wrap; margin: 0; }
         .roll-info-container { position: absolute; left: 60%; top: calc(30vh - 120px); display: flex; flex-direction: column; gap: 8px; text-align: left; z-index: 25; font-family: 'Press Start 2P', cursive; text-shadow: 2px 2px 0 #000; }
 
-        /* --- HEALTH BAR STYLES --- */
         .health-bar-box { background-color: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 10px; border: 3px solid #333; width: 27vw; margin-bottom: 5px; margin-top: 25px; }
-        
-        .health-bar-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; color: white; font-size: 1.2rem; font-weight: bold; }
-
+        .health-bar-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; color: white; font-size: 0.8rem; font-weight: bold; }
         .health-bar-track { width: 100%; height: 23px; background-color: #555; border-radius: 10px; overflow: hidden; border: 2px solid white; }
         .health-bar-fill { height: 100%; width: 100%; background-color: #2ecc71; transition: width 0.5s ease; }
+        .roll-text { opacity: 0; transition: opacity 0.5s; font-size: 0.6rem; color: white; }
 
-        .roll-text { opacity: 0; transition: opacity 0.5s; font-size: 0.8rem; color: white; }
-
-        /* --- SIDEBAR (Right - Balls) --- */
         .sidebar-container { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 110px; height: 50vh; z-index: 30; }
         .sidebar-outer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #c0392b; clip-path: polygon(0% 10%, 100% 0%, 100% 100%, 0% 90%); z-index: 1; }
-        .sidebar-inner { 
-            position: absolute; top: 5px; bottom: 5px; right: 0; left: 5px; 
-            background-color: #e74c3c; clip-path: polygon(0% 10%, 100% 0%, 100% 100%, 0% 90%); 
-            z-index: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            gap: 4px; padding-left: 10px; 
-        }
+        .sidebar-inner { position: absolute; top: 5px; bottom: 5px; right: 0; left: 5px; background-color: #e74c3c; clip-path: polygon(0% 10%, 100% 0%, 100% 100%, 0% 90%); z-index: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding-left: 10px; }
         .poke-icon { width: 80px; height: auto; z-index: 3; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.4)); opacity: 0.6; transition: opacity 0.3s; }
         .poke-icon.active { opacity: 1; } 
-        .selector-ring {
-            position: absolute; width: 70px; height: 70px; 
-            background-color: #2ecc71; border-radius: 50%;
-            z-index: 1; box-shadow: 0 0 10px #2ecc71;
-            display: none; pointer-events: none;
-        }
+        .selector-ring { position: absolute; width: 70px; height: 70px; background-color: #2ecc71; border-radius: 50%; z-index: 1; box-shadow: 0 0 10px #2ecc71; display: none; pointer-events: none; }
 
-        /* --- SIDEBAR (Left - Caught List) --- */
-        .caught-sidebar {
-            position: absolute;
-            left: 0; 
-            top: 37.5%; transform: translateY(-50%);
-            width: 15vw; height: 37.5vh;
-            background-color: white; border: 5px solid gray;
-            overflow-y: auto; z-index: 25;
-            padding: 15px; box-sizing: border-box;
-            
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.8rem; 
-            color: black;
-            text-align: left;
-            display: flex; flex-direction: column; gap: 12px;
-        }
+        .caught-sidebar { position: absolute; left: 0; top: 37.5%; transform: translateY(-50%); width: 15vw; height: 37.5vh; background-color: white; border: 5px solid gray; overflow-y: auto; z-index: 25; padding: 15px; box-sizing: border-box; font-family: 'Press Start 2P', cursive; font-size: 0.6rem; color: black; text-align: left; display: flex; flex-direction: column; gap: 12px; }
         .caught-sidebar::-webkit-scrollbar { width: 8px; }
         .caught-sidebar::-webkit-scrollbar-track { background: #f1f1f1; }
         .caught-sidebar::-webkit-scrollbar-thumb { background: #888; }
 
-        /* --- END PAGE LIST STYLE --- */
-        .end-list-box {
-            width: 50vw; 
-            height: 35vh;
-            background-color: white; 
-            border: 5px solid gray;
-            overflow-y: auto; 
-            padding: 15px; 
-            box-sizing: border-box;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.8rem; 
-            color: black;
-            text-align: left;
-            display: flex; flex-direction: column; gap: 12px;
-            margin: 20px 0;
-        }
+        /* ==========================================================================
+           SECTION 9: LOGS & END SCREENS UI
+           Styles for update logs and session summary.
+           ========================================================================== */
+        .version-header-container { width: 75vw; display: flex; flex-direction: column; align-items: flex-start; margin-top: 20px; }
+        .version-title { font-size: 2rem; font-weight: bold; font-style: italic; color: black; margin: 0; text-shadow: none; font-family: 'Press Start 2P', cursive; }
+        .trapezoid-wrapper { position: relative; width: 100%; height: 25px; margin-top: 5px; margin-bottom: 20px; }
+        .version-divider { width: 100%; height: 100%; background-color: #404040; clip-path: polygon(0 0, 100% 0, calc(100% - 25px) 100%, 0 100%); }
+        .trapezoid-date { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); font-size: 0.6rem; color: #ccc; font-weight: bold; font-family: 'Press Start 2P', cursive; }
+        
+        .log-scroll-area { width: 80vw; height: auto; max-height: 250px; overflow-y: auto; text-align: left; padding-left: 20px; padding-right: 20px; box-sizing: border-box; background: rgba(0,0,0,0.1); border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 20px; }
+        .log-scroll-area::-webkit-scrollbar { width: 8px; }
+        .log-scroll-area::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .log-scroll-area::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        .log-item { font-size: 0.7rem; color: white; margin-bottom: 12px; text-shadow: 1px 1px 2px #000; line-height: 1.6; display: flex; align-items: flex-start; font-family: 'Press Start 2P', cursive; margin-top: 10px; }
+        .log-item img { width: 1.5em; height: 1.5em; margin-right: 15px; image-rendering: pixelated; flex-shrink: 0; margin-top: 2px; }
+        .log-item a { color: #f1c40f; text-decoration: underline; cursor: pointer; }
+
+        .end-list-box { width: 50vw; height: 35vh; background-color: white; border: 5px solid gray; overflow-y: auto; padding: 15px; box-sizing: border-box; font-family: 'Press Start 2P', cursive; font-size: 0.8rem; color: black; text-align: left; display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
         .end-list-box::-webkit-scrollbar { width: 8px; }
         .end-list-box::-webkit-scrollbar-track { background: #f1f1f1; }
         .end-list-box::-webkit-scrollbar-thumb { background: #888; }
-
-        /* --- DECORATION --- */
-        .decoration-wrapper { 
-            position: absolute; bottom: 0; left: 0; width: 100%; 
-            height: 180px; 
-            z-index: 5; 
-            background: linear-gradient(to bottom, transparent 50%, #ffffff 50%); 
-        }
-        .geo-rectangle { 
-            position: absolute; width: 100%; 
-            height: 45px; 
-            background-color: #404040; z-index: 1; 
-            top: 50%; left: 0; transform: translateY(-50%);
-        }
-        .geo-circle-outer { 
-            position: absolute; 
-            width: 135px; height: 135px; 
-            border-radius: 50%; background-color: #404040; z-index: 2; 
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-        }
-        .geo-circle-inner { 
-            position: absolute; 
-            width: 90px; height: 90px; 
-            border-radius: 50%; background-color: #fff; z-index: 3; 
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-        }
-
-        /* --- ABOUT & DISCLAIMER --- */
-        .common-section-two { padding: 80px 20px; background-color: #fff; color: #333; text-align: center; display: flex; justify-content: center; align-items: center; min-height: 40vh; }
-        .info-box { max-width: 700px; text-align: left; }
-        .info-box h2 { font-size: 2.5rem; margin-bottom: 20px; text-align: center; } /* Title Center */
-        .info-box p { font-size: 1.1rem; line-height: 1.6; color: #666; margin-bottom: 25px; } /* Paragraph Left */
-        
-        .disclaimer-text {
-            color: #cc0000;
-            font-weight: bold;
-            text-align: center;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-        }
-
     </style>
 </head>
 <body>
 
     <div id="view-home" class="main-view active-view">
+        <nav class="main-nav">
+            <div class="nav-item" id="nav-home" onclick="switchView('view-home')">
+                <div class="nav-tab-shape">HOME</div>
+                <div class="nav-dropdown" style="background-image: url('Pokeball.png');"><p>Here is the Hub, where everything began!</p></div>
+            </div>
+            <div class="nav-item" id="nav-update-log" onclick="switchView('view-update-log')">
+                <div class="nav-tab-shape">UPDATES</div>
+                <div class="nav-dropdown" style="background-image: url('Greatball.png');"><p>Check new updates here, maybe you will find something helpful!</p></div>
+            </div>
+            <div class="nav-item" id="nav-external-1" onclick="switchView('view-external-1')">
+                <div class="nav-tab-shape">START</div>
+                <div class="nav-dropdown" style="background-image: url('Ultraball.png');"><p>Start your adventure now!</p></div>
+            </div>
+            <div class="nav-item" id="nav-external-2" onclick="switchView('view-external-2')">
+                <div class="nav-tab-shape">POKÉDEX</div>
+                <div class="nav-dropdown" style="background-image: url('Masterball.png');"><p>Check out the Pokédex here, also check out the Pokémons you have caught!</p></div>
+            </div>
+        </nav>
+
         <div class="top-content hero-bg" id="home-hero-bg">
             <div class="hero-inner">
-                <h1 class="hero-title">Welcome to PokeStudy</h1>
-                <p class="hero-subtitle">
-                    Studying and Catching Pokemon made possible!
-                </p>
-                <div class="button-container">
-                    <button class="btn-layered" onclick="switchView('view-external-2')"><span>My Collection</span></button>
-                    <button class="btn-layered" onclick="switchView('view-external-1')"><span>START</span></button>
-                    <button class="btn-layered" onclick="switchView('view-update-log')"><span>Update Log</span></button>
-                </div>
+                <h1 class="hero-title">Welcome to PokéStudy</h1>
+                <p class="hero-subtitle">Studying and Catching Pokémon made possible!</p>
             </div>
             <div class="clock-container" id="clock1">00:00:00</div>
             <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
@@ -305,29 +404,48 @@
         <div class="common-section-two">
             <div class="info-box">
                 <h2>About</h2>
-                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Gemini. This app was designed and implemented using Gemini Pro 3.0 as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p>
+                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Gemini. This app was designed and implemented using Gemini AI as a project of vibe coding. Please reach out to <a href="mailto:rooneycheung@gmail.com" style="color:#333;">rooneycheung@gmail.com</a> if any bugs are found or you wish to suggest any ideas for additions.</p>
                 <div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div>
             </div>
         </div>
     </div>
 
     <div id="view-external-1" class="main-view">
-        <div class="top-content page-1-bg">
-            <button class="btn-float-back" onclick="switchView('view-home')">Return Home</button>
-            <div class="shiny-slider-wrapper">
-                <label>Shiny Chance: 1 in <span id="shinyValueDisplay">4096</span></label>
-                <input type="range" id="shinySlider" min="1" max="4096" value="1" disabled oninput="updateShinySlider(this.value)">
-                
-                <label id="speedLabel" style="margin-top:10px;">Speed: <span id="speedValueDisplay">1x</span></label>
-                <input type="range" id="speedSlider" min="1" max="10" value="1" step="1" disabled oninput="updateSpeedSlider(this.value)">
-                
-                <div id="speedWarning" class="speed-warning">WARNING: HIGH SPEEDS MAY CAUSE APP INSTABILITY!</div>
+        <nav class="main-nav">
+            <div class="nav-item" id="nav-home-1" onclick="switchView('view-home')">
+                <div class="nav-tab-shape">HOME</div>
+                <div class="nav-dropdown" style="background-image: url('Pokeball.png');"><p>Here is the Hub, where everything began!</p></div>
+            </div>
+            <div class="nav-item" id="nav-update-log-1" onclick="switchView('view-update-log')">
+                <div class="nav-tab-shape">UPDATES</div>
+                <div class="nav-dropdown" style="background-image: url('Greatball.png');"><p>Check new updates here, maybe you will find something helpful!</p></div>
+            </div>
+            <div class="nav-item" id="nav-external-1-1" onclick="switchView('view-external-1')">
+                <div class="nav-tab-shape">START</div>
+                <div class="nav-dropdown" style="background-image: url('Ultraball.png');"><p>Start your adventure now!</p></div>
+            </div>
+            <div class="nav-item" id="nav-external-2-1" onclick="switchView('view-external-2')">
+                <div class="nav-tab-shape">POKÉDEX</div>
+                <div class="nav-dropdown" style="background-image: url('Masterball.png');"><p>Check out the Pokédex here, also check out the Pokémons you have caught!</p></div>
+            </div>
+        </nav>
 
-                <input type="password" id="adminPass" class="admin-input" placeholder="Admin Settings" oninput="checkAdminPassword(this.value)">
+        <div class="top-content page-1-bg">
+            <div class="shiny-slider-wrapper" id="startAdminBox">
+                <div class="admin-header-bar">
+                    <button class="admin-minimize-btn" onclick="toggleAdminBox('startAdminBox')">-</button>
+                </div>
+                <div class="admin-content">
+                    <label>Shiny Chance: 1 in <span id="shinyValueDisplay">4096</span></label>
+                    <input type="range" id="shinySlider" min="1" max="4096" value="1" disabled oninput="updateShinySlider(this.value)">
+                    <label id="speedLabel" style="margin-top:10px;">Speed: <span id="speedValueDisplay">1x</span></label>
+                    <input type="range" id="speedSlider" min="1" max="10" value="1" step="1" disabled oninput="updateSpeedSlider(this.value)">
+                    <div id="speedWarning" class="speed-warning">WARNING: HIGH SPEEDS MAY CAUSE APP INSTABILITY!</div>
+                    <input type="password" id="adminPass" class="admin-input" placeholder="Admin Settings" oninput="checkAdminPassword(this.value)">
+                </div>
             </div>
             <div class="hero-inner">
                 <h1 class="hero-title">Session Settings</h1>
-                
                 <div class="settings-box">
                     <div class="settings-row">
                         <div class="settings-label">Balls per encounter: <span id="ballThrowValue">1</span></div>
@@ -336,11 +454,10 @@
                     <div class="settings-row">
                         <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
                             <input type="checkbox" id="untilCaughtCheck" onchange="updateBallSettings()" style="transform: scale(1.5);">
-                            <span class="settings-label">Until it is Caught</span>
+                            <span class="settings-label">Until Caught</span>
                         </label>
                     </div>
                 </div>
-
                 <div class="checklist-wrapper">
                     <div class="checklist-controls">
                         <button class="btn-layered-small" onclick="toggleCheckboxes(true)"><span>Select All</span></button>
@@ -374,33 +491,149 @@
         <div class="common-section-two">
             <div class="info-box">
                 <h2>About</h2>
-                <p>This website was first designed and created by Rooney Cheung on 21st January, 2026 with Gemini. This app was designed and implemented using Gemini AI as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p>
+                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Gemini. This app was designed and implemented using Gemini AI as a project of vibe coding. Please reach out to <a href="mailto:rooneycheung@gmail.com" style="color:#333;">rooneycheung@gmail.com</a> if any bugs are found or you wish to suggest any ideas for additions.</p>
                 <div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div>
             </div>
         </div>
     </div>
 
     <div id="view-external-2" class="main-view">
+        <nav class="main-nav">
+            <div class="nav-item" id="nav-home-2" onclick="switchView('view-home')">
+                <div class="nav-tab-shape">HOME</div>
+                <div class="nav-dropdown" style="background-image: url('Pokeball.png');"><p>Here is the Hub, where everything began!</p></div>
+            </div>
+            <div class="nav-item" id="nav-update-log-2" onclick="switchView('view-update-log')">
+                <div class="nav-tab-shape">UPDATES</div>
+                <div class="nav-dropdown" style="background-image: url('Greatball.png');"><p>Check new updates here, maybe you will find something helpful!</p></div>
+            </div>
+            <div class="nav-item" id="nav-external-1-2" onclick="switchView('view-external-1')">
+                <div class="nav-tab-shape">START</div>
+                <div class="nav-dropdown" style="background-image: url('Ultraball.png');"><p>Start your adventure now!</p></div>
+            </div>
+            <div class="nav-item" id="nav-external-2-2" onclick="switchView('view-external-2')">
+                <div class="nav-tab-shape">POKÉDEX</div>
+                <div class="nav-dropdown" style="background-image: url('Masterball.png');"><p>Check out the Pokédex here, also check out the Pokémons you have caught!</p></div>
+            </div>
+        </nav>
+
         <div class="top-content page-2-bg">
-            <button class="btn-float-back" onclick="switchView('view-home')">Return Home</button>
-            <div class="hero-inner"><h1>My Collection (WIP)</h1><p class="hero-subtitle">View your progress here.</p></div>
+            <div class="mb-corner-left"></div>
+            <div class="mb-corner-right"></div>
+            <div class="mb-letter">M</div>
+
+            <div class="pokedex-admin-box" id="pokedexAdminBox">
+                <div class="admin-header-bar">
+                    <button class="admin-minimize-btn" onclick="toggleAdminBox('pokedexAdminBox')">-</button>
+                </div>
+                <div class="admin-content">
+                    <input type="password" class="admin-input" placeholder="Admin Settings" oninput="checkPokedexAdmin(this.value)">
+                    <div id="pokedexAdminControls" class="pokedex-admin-controls">
+                        <label style="font-size:0.7rem; color:#fff; display:flex; align-items:center; gap:5px;">
+                            <input type="checkbox" id="unlockAllCheck" onchange="toggleUnlockAll()"> Unlock All Pokédex
+                        </label>
+                        <button class="admin-btn-red" onclick="resetPokedexData()">Reset Pokédex Data</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-inner" style="z-index: 10;">
+                <h1 class="hero-title" style="margin-bottom: 20px;">Pokédex</h1>
+                
+                <div class="pokedex-box-outer">
+                    <div class="pokedex-search-wrapper">
+                        <input type="text" id="pokedexSearch" class="pokedex-search-input" placeholder="Search Pokémon..." onkeyup="searchPokedex(this.value)">
+                        
+                        <label class="shiny-toggle-container">
+                            <span>Show Shiny Caught</span>
+                            <input type="checkbox" id="showShinyToggle" onchange="updatePokedexVisuals()">
+                        </label>
+                    </div>
+
+                    <div class="pokedex-box-inner">
+                        <div id="pokedex-view-grid" class="pokedex-sub-view active-sub" style="padding: 20px;">
+                            <div id="pokedexContentArea">
+                                <div style="text-align:center; margin-top: 50px;">Loading Pokédex Data...</div>
+                            </div>
+                        </div>
+
+                        <div id="pokedex-view-detail" class="pokedex-sub-view">
+                            <button class="btn-detail-back" onclick="closePokemonDetail()">BACK</button>
+                            <div class="detail-layout">
+                                <div class="detail-left">
+                                    <h2 id="detailName" style="margin:0 0 10px 0; text-shadow: 2px 2px 0 #000; font-size: 1rem; text-align: center;"></h2>
+                                    <div id="detailFormLabel" class="form-label"></div>
+                                    <img id="detailImage" class="detail-large-img" src="">
+                                    
+                                    <div class="detail-arrows">
+                                        <button class="arrow-btn" onclick="cycleDetail(-1)">&#9664;</button>
+                                        <button class="arrow-btn" onclick="cycleDetail(1)">&#9654;</button>
+                                    </div>
+
+                                    <div id="detailFlavorText" class="detail-flavor-text">
+                                        Loading entry...
+                                    </div>
+                                </div>
+                                <div class="detail-right" id="detailHistoryList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
         </div>
         <div class="common-section-two">
             <div class="info-box">
                 <h2>About</h2>
-                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Gemini. This app was designed and implemented using Gemini AI as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p>
+                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Gemini. This app was designed and implemented using Gemini AI as a project of vibe coding. Please reach out to <a href="mailto:rooneycheung@gmail.com" style="color:#333;">rooneycheung@gmail.com</a> if any bugs are found or you wish to suggest any ideas for additions.</p>
                 <div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div>
             </div>
         </div>
     </div>
 
     <div id="view-update-log" class="main-view">
+        <nav class="main-nav">
+            <div class="nav-item" id="nav-home-3" onclick="switchView('view-home')">
+                <div class="nav-tab-shape">HOME</div>
+                <div class="nav-dropdown" style="background-image: url('Pokeball.png');"><p>Here is the Hub, where everything began!</p></div>
+            </div>
+            <div class="nav-item" id="nav-update-log-3" onclick="switchView('view-update-log')">
+                <div class="nav-tab-shape">UPDATES</div>
+                <div class="nav-dropdown" style="background-image: url('Greatball.png');"><p>Check new updates here, maybe you will find something helpful!</p></div>
+            </div>
+            <div class="nav-item" id="nav-external-1-3" onclick="switchView('view-external-1')">
+                <div class="nav-tab-shape">START</div>
+                <div class="nav-dropdown" style="background-image: url('Ultraball.png');"><p>Start your adventure now!</p></div>
+            </div>
+            <div class="nav-item" id="nav-external-2-3" onclick="switchView('view-external-2')">
+                <div class="nav-tab-shape">POKÉDEX</div>
+                <div class="nav-dropdown" style="background-image: url('Masterball.png');"><p>Check out the Pokédex here, also check out the Pokémons you have caught!</p></div>
+            </div>
+        </nav>
+
         <div class="top-content page-log-bg">
-            <button class="btn-float-back" onclick="switchView('view-home')">Return Home</button>
             <div class="hero-inner" style="padding-top: 80px;"> 
                 <h1 class="hero-title" style="margin-bottom: 30px;">Update Log</h1>
                 
+                <div class="version-header-container">
+                    <div class="version-title">version 1.1.0, The Pokédex Update</div>
+                    <div class="trapezoid-wrapper">
+                        <div class="version-divider"></div>
+                        <div class="trapezoid-date">25/1/2026</div>
+                    </div>
+                </div>
+                <div class="log-scroll-area">
+                    <div class="log-item"><img src="Pokeball.png">Added Pokédex, including sprites <a href="https://github.com/msikma/pokesprite/tree/master/pokemon-gen8" target="_blank">link</a>, description <a href="https://pokeapi.co/api/v2/pokemon-species/" target="_blank">link</a></div>
+                    <div class="log-item"><img src="Pokeball.png">Added different forms to be shown in the Pokédex</div>
+                    <div class="log-item"><img src="Pokeball.png">Added logs to player catch</div>
+                    <div class="log-item"><img src="Pokeball.png">Added Pokédex unlocking system</div>
+                    <div class="log-item"><img src="Pokeball.png">Added show shiny in Pokédex</div>
+                    <div class="log-item"><img src="Pokeball.png">Added admin settings in Pokédex, <i>I heard the dev likes fairy/dragon pokémons</i></div>
+                    <div class="log-item"><img src="Pokeball.png">Added search option in Pokédex</div>
+                    <div class="log-item"><img src="Pokeball.png">Revamped UI and buttons</div>
+                    <div class="log-item"><img src="Pokeball.png">Changed fonts used</div>
+                </div>
+
                 <div class="version-header-container">
                     <div class="version-title">version 1.0.1</div>
                     <div class="trapezoid-wrapper">
@@ -408,49 +641,46 @@
                         <div class="trapezoid-date">22/1/2026</div>
                     </div>
                 </div>
-
-                <div class="log-scroll-area" style="height: auto; max-height: 40vh; margin-bottom: 20px;">
-                    <div class="log-item"><img src="Pokeball.png">Bug fix on catch rate calculator <a href="https://www.dragonflycave.com/mechanics/gen-viii-capturing/" target="_blank">Link</a></div>
-                    <div class="log-item"><img src="Pokeball.png">Bug fix on high speed double/triple catches using a pause appraoch</div>
-                    <div class="log-item"><img src="Pokeball.png">Added pokeball icons to the ending list</div>
-                    <div class="log-item"><img src="Pokeball.png">Added delay after pokemon was caught (2s -->4s)</div>
-                    <div class="log-item"><img src="Pokeball.png">Added variable pokeballs thrown and option to keep throwing until it is caught</div>
-                    <div class="log-item"><img src="Pokeball.png"><i>Added mystery guest?</i></div>
+                <div class="log-scroll-area">
+                    <div class="log-item"><img src="Pokeball.png">Bug fix on catch rate calculator <a href="https://www.dragonflycave.com/mechanics/gen-viii-capturing/" target="_blank">link</a></div>
+                    <div class="log-item"><img src="Pokeball.png">Bug fix on high speed double/triple catches using a pause approach</div>
+                    <div class="log-item"><img src="Pokeball.png">Added pokéball icons to the ending list</div>
+                    <div class="log-item"><img src="Pokeball.png">Added delay after pokémon was caught (2s -->4s)</div>
+                    <div class="log-item"><img src="Pokeball.png">Added variable pokéballs thrown and option to keep throwing until it is caught</div>
+                    <div class="log-item"><img src="Pokeball.png">Added mystery guest?</div>
                 </div>
 
                 <div class="version-header-container">
-                    <div class="version-title">version 1.0.0</div>
+                    <div class="version-title">version 1.0.0, Release</div>
                     <div class="trapezoid-wrapper">
                         <div class="version-divider"></div>
                         <div class="trapezoid-date">21/1/2026</div>
                     </div>
                 </div>
-
                 <div class="log-scroll-area">
-                    <div class="log-item"><img src="Pokeball.png">Added Pokemon Gifs (Gen 8, end of Galar) <a href="https://play.pokemonshowdown.com/sprites/" target="_blank">Link</a></div>
-                    <div class="log-item"><img src="Pokeball.png">Added Pokemon APIs (Gen 8, end of Galar) <a href="https://www.kaggle.com/datasets/maca11/all-pokemon-dataset" target="_blank">Link</a></div>
-                    <div class="log-item"><img src="Pokeball.png">Added Catching formula <a href="https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Pok%C3%A9mon_Sword,_Shield,_Brilliant_Diamond,_and_Shining_Pearl" target="_blank">Link</a></div>
+                    <div class="log-item"><img src="Pokeball.png">Added Pokémon Gifs (Gen 8, end of Galar) <a href="https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9_Ball" target="_blank">link</a></div>
+                    <div class="log-item"><img src="Pokeball.png">Added Pokémon APIs (Gen 8, end of Galar) <a href="https://www.kaggle.com/datasets/maca11/all-pokemon-dataset" target="_blank">link</a></div>
+                    <div class="log-item"><img src="Pokeball.png">Added Catching formula <a href="https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Pok%C3%A9mon_Sword,_Shield,_Brilliant_Diamond,_and_Shining_Pearl" target="_blank">link</a></div>
                     <div class="log-item"><img src="Pokeball.png">Added randomly generated variables (Level: 1-100, 1% each, Statuses: No status, 50%/Paralyzed or Poisoned or Burned, 15%/Frozen or Asleep, 2.5%, HP: Full HP, 60%/ Half HP 30%, 1 HP, 10%)</div>
-                    <div class="log-item"><img src="Pokeball.png">Added Pokeball cycling (Pokeball, 50%/Great Ball, 30%/ Ultra Ball 15%/ Master Ball, 5%) <a href="https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9_Ball" target="_blank">Link</a></div>
+                    <div class="log-item"><img src="Pokeball.png">Added Pokéball cycling (Pokéball, 50%/Great Ball, 30%/ Ultra Ball 15%/ Master Ball, 5%) <a href="https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9_Ball" target="_blank">link</a></div>
                     <div class="log-item"><img src="Pokeball.png">Added Textbar with text and enter animation</div>
                     <div class="log-item"><img src="Pokeball.png">Added Dawn/Day/Sunset/Night cycle</div>
-                    <div class="log-item"><img src="Pokeball.png">Added CSS elements for Pokeball backgrounds</div>
+                    <div class="log-item"><img src="Pokeball.png">Added CSS elements for Pokéball backgrounds</div>
                     <div class="log-item"><img src="Pokeball.png">Added Shiny Roll</div>
-                    <div class="log-item"><img src="Pokeball.png">Added Admin settings (Speed Up: 1-10x/ Shiny Chance Up) <span style="font-size: 0.1em; margin-left:5px;">iloveclodsire</span></div>
+                    <div class="log-item"><img src="Pokeball.png">Added Admin settings (Speed Up: 1-10x/ Shiny Chance Up) <span style="font-size:0.1em; margin-left:5px;">iloveclodsire</span></div>
                     <div class="log-item"><img src="Pokeball.png">Added clock</div>
                     <div class="log-item"><img src="Pokeball.png">Added Session Timer settings</div>
                     <div class="log-item"><img src="Pokeball.png">Added Session Generation Settings</div>
-                    <div class="log-item"><img src="Pokeball.png">Added Textures (Battle Ring, Day, Dawn/Dusk, Night) <i>From original Pokemon Game Gen 6 or 7</i></div>
-                    <div class="log-item"><img src="Pokeball.png">Added Mega, Dynamax, Rrgional and Alternate Forms </div>
+                    <div class="log-item"><img src="Pokeball.png">Added Textures (Battle Ring, Day, Dawn/Dusk, Night) <i>From original Pokémon Game Gen 6 or 7</i></div>
+                    <div class="log-item"><img src="Pokeball.png">Added Mega, Dynamax, Regional and Alternate Forms</div>
                 </div>
-
             </div>
             <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
         </div>
         <div class="common-section-two">
             <div class="info-box">
                 <h2>About</h2>
-                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Gemini. This app was designed and implemented using Gemini AI as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p>
+                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Gemini. This app was designed and implemented using Gemini AI as a project of vibe coding. Please reach out to <a href="mailto:rooneycheung@gmail.com" style="color:#333;">rooneycheung@gmail.com</a> if any bugs are found or you wish to suggest any ideas for additions.</p>
                 <div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div>
             </div>
         </div>
@@ -458,7 +688,7 @@
 
     <div id="view-game" class="main-view">
         <div class="top-content game-bg" id="game-bg-target">
-            <button class="btn-float-back" onclick="stopGameAndToSettings()">BACK</button>
+            <button class="btn-float-back-game" onclick="stopGameAndToSettings()">BACK</button>
             <button class="btn-float-pause" id="btnPause" onclick="togglePause()">PAUSE</button>
             <button class="btn-float-end" id="btnEnd" onclick="handleEndButton()">END SESSION</button>
 
@@ -468,14 +698,13 @@
             <div class="roll-info-container">
                 <div class="health-bar-box" id="healthBarUI" style="display: none;">
                     <div class="health-bar-top-row">
-                        <span id="hbName">Pokemon</span>
+                        <span id="hbName">Pokémon</span>
                         <span id="hbLevel">Lv. 50</span>
                     </div>
                     <div class="health-bar-track">
                         <div class="health-bar-fill" id="hbFill"></div>
                     </div>
                 </div>
-
                 <div id="statusRollText" class="roll-text"></div>
             </div>
 
@@ -491,7 +720,7 @@
             </div>
 
             <div class="caught-sidebar" id="caughtListContainer">
-                <div style="font-weight: bold; margin-bottom: 10px;">CAUGHT POKEMON:</div>
+                <div style="font-weight: bold; margin-bottom: 10px;">CAUGHT POKÉMON:</div>
             </div>
 
             <div class="hero-inner">
@@ -505,51 +734,69 @@
                 <p id="gameTextBox" class="game-text"></p>
                 <div class="textbox-triangle"></div>
             </div>
-            
             <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
         </div>
-        <div class="common-section-two"><div class="info-box"><h2>About</h2><p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Gemini. This app was designed and implemented using Gemini AI as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p><div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div></div></div>
     </div>
 
     <div id="view-end" class="main-view">
+        <nav class="main-nav">
+            <div class="nav-item" id="nav-home-4" onclick="switchView('view-home')">
+                <div class="nav-tab-shape">HOME</div>
+                <div class="nav-dropdown" style="background-image: url('Pokeball.png');"><p>Here is the Hub, where everything began!</p></div>
+            </div>
+            <div class="nav-item" id="nav-update-log-4" onclick="switchView('view-update-log')">
+                <div class="nav-tab-shape">UPDATES</div>
+                <div class="nav-dropdown" style="background-image: url('Greatball.png');"><p>Check new updates here, maybe you will find something helpful!</p></div>
+            </div>
+            <div class="nav-item" id="nav-external-1-4" onclick="switchView('view-external-1')">
+                <div class="nav-tab-shape">START</div>
+                <div class="nav-dropdown" style="background-image: url('Ultraball.png');"><p>Start your adventure now!</p></div>
+            </div>
+            <div class="nav-item" id="nav-external-2-4" onclick="switchView('view-external-2')">
+                <div class="nav-tab-shape">POKÉDEX</div>
+                <div class="nav-dropdown" style="background-image: url('Masterball.png');"><p>Check out the Pokédex here, also check out the Pokémons you have caught!</p></div>
+            </div>
+        </nav>
+
         <div class="top-content page-1-bg"> 
             <div class="hero-inner" style="gap: 15px; padding-bottom: 50px;">
                 <h1 class="hero-title">Session Complete</h1>
                 <p class="hero-subtitle">Good job for locking in, Professor Oak is proud of you!</p>
-                
                 <div id="endSessionList" class="end-list-box"></div>
-
-                <div class="button-container">
-                    <button class="btn-layered" onclick="switchView('view-home')"><span>Return Home</span></button>
-                </div>
+                <button class="btn-layered" onclick="switchView('view-external-1')"><span>NEW SESSION</span></button>
             </div>
             <div class="decoration-wrapper"><div class="geo-rectangle"></div><div class="geo-circle-outer"></div><div class="geo-circle-inner"></div></div>
         </div>
         <div class="common-section-two">
             <div class="info-box">
                 <h2>About</h2>
-                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Gemini. This app was designed and implemented using Gemini AI as a project of vibe coding. Please reach out to rooneycheung@gmail.com if any bugs are found or you wish to suggest any ideas for additions.</p>
+                <p>This website was first designed and created by Rooney Cheung on 20th January, 2026 with Gemini. This app was designed and implemented using Gemini AI as a project of vibe coding. Please reach out to <a href="mailto:rooneycheung@gmail.com" style="color:#333;">rooneycheung@gmail.com</a> if any bugs are found or you wish to suggest any ideas for additions.</p>
                 <div class="disclaimer-text">I DO NOT OWN ANY MATERIALS OR GRAPHICS USED HERE, PLEASE SEE UPDATE LOG FOR ATTRIBUTION TO CREATORS.</div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- DATA MAPS FROM DIAGNOSTIC LOG ---
+        /* ==========================================================================
+           SECTION 1: DATA MAPS & CONFIGURATION
+           Static data structures for Pokemon variants, generations, and API URLs.
+           ========================================================================== */
+        
+        // Maps IDs to array of alternate form slugs (Megas, Gmax, Regional variants)
         const VARIANT_MAP = {
             3: ["venusaur", "venusaur-mega"],
-            6: ["charizard", "charizard-gmax"],
+            6: ["charizard", "charizard-mega-x", "charizard-mega-y", "charizard-gmax"],
             9: ["blastoise", "blastoise-mega"],
             12: ["butterfree", "butterfree-gmax"],
             15: ["beedrill", "beedrill-mega"],
             18: ["pidgeot", "pidgeot-mega"],
             19: ["rattata", "rattata-alola"],
             20: ["raticate", "raticate-alola"],
-            25: ["pikachu", "pikachu-belle", "pikachu-pop-star", "pikachu-phd", "pikachu-libre", "pikachu-cosplay", "pikachu-starter", "pikachu-gmax"],
+            25: ["pikachu", "pikachu-belle", "pikachu-pop-star", "pikachu-phd", "pikachu-libre", "pikachu-cosplay", "pikachu-starter", "pikachu-gmax", "pikachu-f"],
             26: ["raichu", "raichu-alola"],
             27: ["sandshrew", "sandshrew-alola"],
             28: ["sandslash", "sandslash-alola"],
-            36: ["clefable", "clefable-mega"],
+            36: ["clefable"],
             37: ["vulpix", "vulpix-alola"],
             38: ["ninetales", "ninetales-alola"],
             50: ["diglett", "diglett-alola"],
@@ -560,7 +807,7 @@
             59: ["arcanine", "arcanine-hisui"],
             65: ["alakazam", "alakazam-mega"],
             68: ["machamp", "machamp-gmax"],
-            71: ["victreebel", "victreebel-mega"],
+            71: ["victreebel"],
             74: ["geodude", "geodude-alola"],
             75: ["graveler", "graveler-alola"],
             76: ["golem", "golem-alola"],
@@ -576,10 +823,10 @@
             100: ["voltorb", "voltorb-hisui"],
             101: ["electrode", "electrode-hisui"],
             103: ["exeggutor", "exeggutor-alola"],
-            105: ["marowak", "marowak-alola", "marowak-totem"],
+            105: ["marowak", "marowak-alola"],
             110: ["weezing", "weezing-galar"],
             115: ["kangaskhan", "kangaskhan-mega"],
-            121: ["starmie", "starmie-mega"],
+            121: ["starmie"],
             127: ["pinsir", "pinsir-mega"],
             130: ["gyarados", "gyarados-mega"],
             131: ["lapras", "lapras-gmax"],
@@ -589,21 +836,23 @@
             144: ["articuno", "articuno-galar"],
             145: ["zapdos", "zapdos-galar"],
             146: ["moltres", "moltres-galar"],
-            149: ["dragonite", "dragonite-mega"],
-            154: ["meganium", "meganium-mega"],
+            149: ["dragonite"],
+            150: ["mewtwo", "mewtwo-mega-x", "mewtwo-mega-y"],
+            154: ["meganium"],
             157: ["typhlosion", "typhlosion-hisui"],
-            160: ["feraligatr", "feraligatr-mega"],
+            160: ["feraligatr"],
             181: ["ampharos", "ampharos-mega"],
             194: ["wooper", "wooper-paldea"],
             199: ["slowking", "slowking-galar"],
-            201: ["unown", "unown-a", "unown-b", "unown-c", "unown-d", "unown-e", "unown-f", "unown-g", "unown-h", "unown-i", "unown-j", "unown-k", "unown-l", "unown-m", "unown-n", "unown-o", "unown-p", "unown-q", "unown-r", "unown-s", "unown-t", "unown-u", "unown-v", "unown-w", "unown-x", "unown-y", "unown-z", "unown-question", "unown-exclamation"],
+            201: ["unown", "unown-b", "unown-c", "unown-d", "unown-e", "unown-f", "unown-g", "unown-h", "unown-i", "unown-j", "unown-k", "unown-l", "unown-m", "unown-n", "unown-o", "unown-p", "unown-q", "unown-r", "unown-s", "unown-t", "unown-u", "unown-v", "unown-w", "unown-x", "unown-y", "unown-z", "unown-question", "unown-exclamation"],
+            202: ["wobbuffet", "wobbuffet-f"],
             208: ["steelix", "steelix-mega"],
             211: ["qwilfish", "qwilfish-hisui"],
             212: ["scizor", "scizor-mega"],
             214: ["heracross", "heracross-mega"],
             215: ["sneasel", "sneasel-hisui"],
             222: ["corsola", "corsola-galar"],
-            227: ["skarmory", "skarmory-mega"],
+            227: ["skarmory"],
             229: ["houndoom", "houndoom-mega"],
             248: ["tyranitar", "tyranitar-mega"],
             254: ["sceptile", "sceptile-mega"],
@@ -640,14 +889,18 @@
             428: ["lopunny", "lopunny-mega"],
             445: ["garchomp", "garchomp-mega"],
             448: ["lucario", "lucario-mega"],
+            449: ["hippopotas", "hippopotas-f"],
+            450: ["hippowdon", "hippowdon-f"],
             460: ["abomasnow", "abomasnow-mega"],
             475: ["gallade", "gallade-mega"],
-            478: ["froslass", "froslass-mega"],
+            478: ["froslass"],
             479: ["rotom", "rotom-heat", "rotom-wash", "rotom-frost", "rotom-fan", "rotom-mow"],
             487: ["giratina", "giratina-origin"],
             492: ["shaymin", "shaymin-sky"],
-            500: ["emboar", "emboar-mega"],
+            493: ["arceus", "arceus-bug", "arceus-dark", "arceus-dragon", "arceus-electric", "arceus-fairy", "arceus-fighting", "arceus-fire", "arceus-flying", "arceus-ghost", "arceus-grass", "arceus-ground", "arceus-ice", "arceus-poison", "arceus-psychic", "arceus-rock", "arceus-steel", "arceus-water"],
+            500: ["emboar"],
             503: ["samurott", "samurott-hisui"],
+            521: ["unfezant", "unfezant-f"],
             531: ["audino", "audino-mega"],
             549: ["lilligant", "lilligant-hisui"],
             550: ["basculin", "basculin-blue-striped", "basculin-white-striped"],
@@ -670,11 +923,12 @@
             647: ["keldeo", "keldeo-resolute"],
             648: ["meloetta", "meloetta-pirouette"],
             658: ["greninja", "greninja-ash"],
-            666: ["vivillon", "vivillon-archipelago", "vivillon-continental", "vivillon-elegant", "vivillon-fancy", "vivillon-garden", "vivillon-highplains", "vivillon-icysnow", "vivillon-jungle", "vivillon-marine", "vivillon-modern", "vivillon-monsoon", "vivillon-ocean", "vivillon-pokeball", "vivillon-polar", "vivillon-river", "vivillon-sandstorm", "vivillon-savanna", "vivillon-sun", "vivillon-tundra"],
+            666: ["vivillon", "vivillon-archipelago", "vivillon-continental", "vivillon-elegant", "vivillon-fancy", "vivillon-garden", "vivillon-high-plains", "vivillon-icy-snow", "vivillon-jungle", "vivillon-marine", "vivillon-modern", "vivillon-monsoon", "vivillon-ocean", "vivillon-poke-ball", "vivillon-polar", "vivillon-river", "vivillon-sandstorm", "vivillon-savanna", "vivillon-sun", "vivillon-tundra"],
+            668: ["pyroar", "pyroar-f"],
             669: ["flabebe", "flabebe-blue", "flabebe-orange", "flabebe-white", "flabebe-yellow"],
             670: ["floette", "floette-blue", "floette-orange", "floette-white", "floette-yellow", "floette-eternal"],
             671: ["florges", "florges-blue", "florges-orange", "florges-white", "florges-yellow"],
-            676: ["furfrou", "furfrou-dandy", "furfrou-debutante", "furfrou-diamond", "furfrou-heart", "furfrou-kabuki", "furfrou-lareine", "furfrou-matron", "furfrou-pharaoh", "furfrou-star"],
+            676: ["furfrou", "furfrou-dandy", "furfrou-debutante", "furfrou-diamond", "furfrou-heart", "furfrou-kabuki", "furfrou-la-reine", "furfrou-matron", "furfrou-pharaoh", "furfrou-star"],
             678: ["meowstic", "meowstic-f"],
             681: ["aegislash", "aegislash-blade"],
             705: ["sliggoo", "sliggoo-hisui"],
@@ -686,18 +940,19 @@
             719: ["diancie", "diancie-mega"],
             720: ["hoopa", "hoopa-unbound"],
             724: ["decidueye", "decidueye-hisui"],
-            735: ["gumshoos", "gumshoos-totem"],
-            738: ["vikavolt", "vikavolt-totem"],
-            741: ["oricorio", "oricorio-pompom", "oricorio-pau", "oricorio-sensu"],
+            735: ["gumshoos"],
+            738: ["vikavolt"],
+            741: ["oricorio", "oricorio-pom-pom", "oricorio-pau", "oricorio-sensu"],
             745: ["lycanroc", "lycanroc-midnight", "lycanroc-dusk"],
             746: ["wishiwashi", "wishiwashi-school"],
-            752: ["araquanid", "araquanid-totem"],
-            754: ["lurantis", "lurantis-totem"],
-            758: ["salazzle", "salazzle-totem"],
+            752: ["araquanid"],
+            754: ["lurantis"],
+            758: ["salazzle"],
+            773: ["silvally", "silvally-bug", "silvally-dark", "silvally-dragon", "silvally-electric", "silvally-fairy", "silvally-fighting", "silvally-fire", "silvally-flying", "silvally-ghost", "silvally-grass", "silvally-ground", "silvally-ice", "silvally-poison", "silvally-psychic", "silvally-rock", "silvally-steel", "silvally-water"],
             774: ["minior", "minior-orange", "minior-yellow", "minior-green", "minior-blue", "minior-indigo", "minior-violet"],
-            777: ["togedemaru", "togedemaru-totem"],
-            778: ["mimikyu", "mimikyu-busted"],
-            800: ["necrozma", "necrozma-ultra", "necrozma-duskmane", "necrozma-dawnwings"],
+            777: ["togedemaru"],
+            778: ["mimikyu"],
+            800: ["necrozma", "necrozma-ultra", "necrozma-dusk", "necrozma-dawn"],
             801: ["magearna", "magearna-original"],
             809: ["melmetal", "melmetal-gmax"],
             818: ["inteleon", "inteleon-gmax"],
@@ -709,70 +964,185 @@
             842: ["appletun", "appletun-gmax"],
             844: ["sandaconda", "sandaconda-gmax"],
             845: ["cramorant", "cramorant-gulping", "cramorant-gorging"],
-            849: ["toxtricity-low-key", "toxtricity-gmax", "toxtricity-low-key-gmax"],
+            849: ["toxtricity", "toxtricity-gmax", "toxtricity-low-key"],
             851: ["centiskorch", "centiskorch-gmax"],
             858: ["hatterene", "hatterene-gmax"],
             861: ["grimmsnarl", "grimmsnarl-gmax"],
-            // ALCREMIE GENERATED BELOW
             875: ["eiscue", "eiscue-noice"],
+            876: ["indeedee", "indeedee-f"],
             877: ["morpeko", "morpeko-hangry"],
             879: ["copperajah", "copperajah-gmax"],
             884: ["duraludon", "duraludon-gmax"],
             888: ["zacian", "zacian-crowned"],
             889: ["zamazenta", "zamazenta-crowned"],
             890: ["eternatus", "eternatus-eternamax"],
+            892: ["urshifu"],
             893: ["zarude", "zarude-dada"],
-            898: ["calyrex", "calyrex-ice", "calyrex-shadow"]
+            898: ["calyrex", "calyrex-ice-rider", "calyrex-shadow-rider"]
         };
 
-        // --- ALCREMIE LIST GENERATION ---
+        const BASE_LABEL_MAP = {
+            25: "M", 201: "A", 202: "M", 413: "Plant", 422: "West", 423: "West",
+            449: "M", 450: "M", 521: "M", 585: "Spring", 586: "Spring",
+            592: "M", 593: "M", 668: "M", 678: "M", 710: "Average",
+            711: "Average", 718: "50%", 741: "Baile", 745: "Day", 849: "Amped",
+            876: "M", 892: "Single Strike"
+        };
+
+        const GEN_VERSION_MAP = {
+            1: "red",
+            2: "silver",
+            3: "emerald",
+            4: "pearl",
+            5: "white",
+            6: "x",
+            7: "moon",
+            8: "shield"
+        };
+
+        const FIX_MAP = {
+            29: "nidoranf", 32: "nidoranm", 122: "mrmime", 250: "hooh", 439: "mimejr",
+            474: "porygonz", 550: "basculin", 678: "meowstic", 772: "typenull",
+            782: "jangmoo", 783: "hakamoo", 784: "kommoo", 785: "tapukoko",
+            786: "tapulele", 787: "tapubulu", 788: "tapufini", 849: "toxtricity",
+            866: "mrrime", 876: "indeedee", 892: "urshifu"
+        };
+        
+        // Secret Data configuration for special guests (MissingNo, Kirby)
+        const SECRET_DATA = {
+            9000: {
+                name: "MissingNo.",
+                basePng: "https://archives.bulbagarden.net/media/upload/9/98/Missingno_RB.png",
+                shinyPng: "https://archives.bulbagarden.net/media/upload/0/03/Missingno_Y.png", 
+                baseGif: "https://archives.bulbagarden.net/media/upload/9/98/Missingno_RB.png", 
+                shinyGif: "https://archives.bulbagarden.net/media/upload/0/03/Missingno_Y.png", 
+                desc: "Ã‘iÃ±o... ?@#&!... Error... System Corrupted... Data Fragment Found..."
+            },
+            9001: {
+                name: "Kirby",
+                basePng: "https://www.seekpng.com/png/full/863-8634131_kirby-knife.png",
+                shinyPng: "https://static.wikia.nocookie.net/kirby/images/5/57/KRTDL_Mike.png/revision/latest/scale-to-width-down/1000?cb=20201011130017&path-prefix=en",
+                baseGif: "https://www.icegif.com/wp-content/uploads/icegif-7187.gif",
+                shinyGif: "https://www.icegif.com/wp-content/uploads/2022/01/icegif-1177.gif",
+                desc: "A Guest from a Star Crossed World."
+            }
+        };
+
+        // Self-invoking function to populate Alcremie forms dynamically
         (function generateAlcremieForms() {
             const flavors = ['vanilla-cream', 'ruby-cream', 'matcha-cream', 'mint-cream', 'lemon-cream', 'salted-cream', 'ruby-swirl', 'caramel-swirl', 'rainbow-swirl'];
             const sweets = ['strawberry', 'berry', 'love', 'star', 'clover', 'flower', 'ribbon'];
-            
-            let forms = ['alcremie-gmax']; // Start with GMAX
-            
-            // Generate all 63 Combinations
-            flavors.forEach(flavor => {
-                sweets.forEach(sweet => {
-                    forms.push(`alcremie-${flavor}-${sweet}`);
-                });
-            });
-
-            // Assign to ID 869
+            let forms = ['alcremie', 'alcremie-gmax'];
+            flavors.forEach(flavor => { sweets.forEach(sweet => { 
+                if (flavor === 'vanilla-cream' && sweet === 'strawberry') return;
+                forms.push(`alcremie-${flavor}-${sweet}`); 
+            }); });
             VARIANT_MAP[869] = forms;
         })();
 
-        const FIX_MAP = {
-            32: "nidoranm",
-            122: "mrmime",
-            250: "hooh",
-            439: "mimejr",
-            550: "basculin",
-            678: "meowstic",
-            772: "typenull",
-            782: "jangmoo",
-            783: "hakamoo",
-            784: "kommoo",
-            785: "tapukoko",
-            786: "tapulele",
-            787: "tapubulu",
-            788: "tapufini",
-            849: "toxtricity",
-            866: "mrrime",
-            876: "indeedee",
-            892: "urshifu"
-        };
+        // Constants and Endpoints
+        const POKESPRITE_BASE = "https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/regular/";
+        const POKESPRITE_SHINY = "https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/shiny/";
+        const UNOWN_Q_URL = "https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/regular/unown-question.png";
 
-        // --- BASIC UTILS ---
+        const generationRanges = [
+            { start: 1, end: 151, name: "Generation I" },
+            { start: 152, end: 251, name: "Generation II" },
+            { start: 252, end: 386, name: "Generation III" },
+            { start: 387, end: 493, name: "Generation IV" },
+            { start: 494, end: 649, name: "Generation V" },
+            { start: 650, end: 721, name: "Generation VI" },
+            { start: 722, end: 809, name: "Generation VII" },
+            { start: 810, end: 898, name: "Generation VIII" }
+        ];
+
+        /* ==========================================================================
+           SECTION 2: GLOBAL STATE MANAGEMENT
+           Variables tracking app status, settings, and player history.
+           ========================================================================== */
+        let unlockAllPokedex = false;
+        let configMinutes = 0; 
+        let shinyOdds = 4096;
+        let gameTickIntervalTime = 1000;
+        let maxBallsToThrow = 1;
+        let throwUntilCaught = false;
+
+        // Game Runtime State
+        let gameInterval = null;
+        let gameSecondsRemaining = 0;
+        let isPaused = false;
+        let isLoading = false;
+        let validPokemonIds = [];
+        let typewriterInterval = null; 
+        let caughtPokemonList = []; 
+        let currentBallIndex = 0; 
+        let isFirstEncounter = true; 
+        let encounterSeconds = 0;
+        let currentFinalChance = 0;
+        let currentPokemonName = "";
+        let currentLevel = 1; 
+        let isShiny = false;
+        let currentSpriteSlug = ""; 
+        let transitionPending = false;
+        let transitionDelayCounter = 0; 
+        let currentThrowCount = 0;
+        let endConfirmState = false;
+        let endConfirmTimeout = null; 
+        let currentPokemonId = 0;
+
+        // Pokedex View State
+        let pokedexLoaded = false;
+        let pokedexSearchMap = {}; 
+        let detailCycleList = [];
+        let currentDetailIndex = 0;
+        let globalCaughtHistory;
+        let pokedexFlavorCache = {};
+
+        // Load History from LocalStorage
+        let savedHistory = localStorage.getItem('pokeStudy_caughtHistory');
+        if (savedHistory) {
+            globalCaughtHistory = JSON.parse(savedHistory);
+            // Resize array for secrets if coming from older version
+            if (globalCaughtHistory.length < 10000) {
+                const newArr = Array.from({length: 10000}, () => []);
+                globalCaughtHistory.forEach((val, idx) => { newArr[idx] = val; });
+                globalCaughtHistory = newArr;
+            }
+        } else {
+            globalCaughtHistory = Array.from({length: 10000}, () => []);
+        }
+
+        /* ==========================================================================
+           SECTION 3: NAVIGATION & VIEW LOGIC
+           Functions to switch between 'pages' and handle background clocks.
+           ========================================================================== */
         function switchView(targetId) {
             const currentView = document.querySelector('.active-view');
             const targetView = document.getElementById(targetId);
             if (currentView && targetView) {
                 currentView.classList.remove('active-view');
+                
+                // Reset active states on navigation tabs
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                
+                // Determine active nav based on view ID
+                if (targetId === 'view-home') {
+                    document.querySelectorAll('#nav-home, #nav-home-1, #nav-home-2, #nav-home-3, #nav-home-4').forEach(el => el.classList.add('active'));
+                } else if (targetId === 'view-update-log') {
+                    document.querySelectorAll('#nav-update-log, #nav-update-log-1, #nav-update-log-2, #nav-update-log-3, #nav-update-log-4').forEach(el => el.classList.add('active'));
+                } else if (targetId === 'view-external-1') {
+                    document.querySelectorAll('#nav-external-1, #nav-external-1-1, #nav-external-1-2, #nav-external-1-3, #nav-external-1-4').forEach(el => el.classList.add('active'));
+                } else if (targetId === 'view-external-2') {
+                    document.querySelectorAll('#nav-external-2, #nav-external-2-1, #nav-external-2-2, #nav-external-2-3, #nav-external-2-4').forEach(el => el.classList.add('active'));
+                }
+
                 setTimeout(() => { targetView.classList.add('active-view'); targetView.scrollTop = 0; }, 50); 
             }
+            if (targetId === 'view-external-2') {
+                updatePokedexVisuals();
+            }
         }
+
         function updateMainClock() {
             const now = new Date();
             let hours = now.getHours(), minutes = now.getMinutes(), seconds = now.getSeconds();
@@ -793,8 +1163,10 @@
             else gameBg.style.backgroundImage = "url('nightbackground.jpg')";
         }
 
-        // --- CONFIG ---
-        let configMinutes = 0; 
+        /* ==========================================================================
+           SECTION 4: SETTINGS & ADMIN LOGIC
+           Handling timer adjustments, checkbox states, and admin overrides.
+           ========================================================================== */
         function adjustTimer(amount) { configMinutes += amount; if (configMinutes < 0) configMinutes = 0; updateConfigDisplay(); localStorage.setItem('mySavedTimer', configMinutes); }
         function resetTimer() { configMinutes = 0; updateConfigDisplay(); localStorage.setItem('mySavedTimer', configMinutes); }
         function updateConfigDisplay() {
@@ -815,50 +1187,30 @@
             boxes.forEach((box, i) => { box.checked = val; localStorage.setItem('gen_check_' + i, val); });
         }
 
-        let shinyOdds = 4096;
         function updateShinySlider(val) {
             shinyOdds = 4097 - val;
             document.getElementById('shinyValueDisplay').innerText = shinyOdds;
             localStorage.setItem('shinyChance', shinyOdds);
         }
 
-        let gameTickIntervalTime = 1000;
         function updateSpeedSlider(val) {
             const multiplier = parseInt(val);
             document.getElementById('speedValueDisplay').innerText = multiplier + "x";
-            
-            // Logic: 1x = 1000ms, 10x = 100ms
             gameTickIntervalTime = 1000 / multiplier; 
-
-            // If game is running, restart interval
             if (gameInterval && !isPaused) {
                 clearInterval(gameInterval);
                 gameInterval = setInterval(gameTick, gameTickIntervalTime);
             }
         }
 
-        // NEW SETTINGS FUNCTIONALITY
-        let maxBallsToThrow = 1;
-        let throwUntilCaught = false;
-
         function updateBallSettings() {
             const slider = document.getElementById('ballThrowSlider');
             const check = document.getElementById('untilCaughtCheck');
-            
             maxBallsToThrow = parseInt(slider.value);
             throwUntilCaught = check.checked;
-            
             document.getElementById('ballThrowValue').innerText = maxBallsToThrow;
-            
-            // Disable slider if checked
-            if (throwUntilCaught) {
-                slider.disabled = true;
-                slider.style.opacity = 0.5;
-            } else {
-                slider.disabled = false;
-                slider.style.opacity = 1;
-            }
-            
+            if (throwUntilCaught) { slider.disabled = true; slider.style.opacity = 0.5; } 
+            else { slider.disabled = false; slider.style.opacity = 1; }
             localStorage.setItem('maxBalls', maxBallsToThrow);
             localStorage.setItem('untilCaught', throwUntilCaught);
         }
@@ -866,7 +1218,6 @@
         function loadBallSettings() {
             const savedBalls = localStorage.getItem('maxBalls');
             const savedUntil = localStorage.getItem('untilCaught');
-            
             if (savedBalls) {
                 maxBallsToThrow = parseInt(savedBalls);
                 document.getElementById('ballThrowSlider').value = maxBallsToThrow;
@@ -876,46 +1227,7 @@
                 throwUntilCaught = true;
                 document.getElementById('untilCaughtCheck').checked = true;
             }
-            updateBallSettings(); // Refresh UI state
-        }
-
-        function checkAdminPassword(val) {
-            const slider = document.getElementById('shinySlider');
-            const speedSlider = document.getElementById('speedSlider');
-            const warning = document.getElementById('speedWarning');
-
-            if (val === 'iloveclodsire') {
-                // Unlock Shiny
-                slider.disabled = false;
-                slider.style.opacity = '1';
-                slider.style.cursor = 'pointer';
-
-                // UNLOCK SPEED SLIDER
-                speedSlider.disabled = false;
-                speedSlider.style.opacity = '1';
-                speedSlider.style.cursor = 'pointer';
-
-                // Show Warning
-                warning.style.display = 'block';
-
-            } else {
-                // Lock Shiny
-                slider.disabled = true;
-                slider.style.opacity = '0.5';
-                slider.style.cursor = 'not-allowed';
-                slider.value = 1;
-                updateShinySlider(1);
-
-                // LOCK SPEED SLIDER
-                speedSlider.disabled = true;
-                speedSlider.style.opacity = '0.5';
-                speedSlider.style.cursor = 'not-allowed';
-                speedSlider.value = 1;
-                updateSpeedSlider(1);
-
-                // Hide Warning
-                warning.style.display = 'none';
-            }
+            updateBallSettings();
         }
 
         function initShinySlider() {
@@ -925,38 +1237,445 @@
             slider.disabled = true;
         }
 
-        // --- GAME VARIABLES ---
-        let gameInterval = null;
-        let gameSecondsRemaining = 0;
-        let isPaused = false;
-        let isLoading = false; // High Speed Fix
-        let validPokemonIds = [];
-        let typewriterInterval = null; 
-        let caughtPokemonList = []; 
-        let currentBallIndex = 0; 
-        let isFirstEncounter = true; // NEW FLAG for MissingNo
+        // Admin Auth and Controls
+        function checkAdminPassword(val) {
+            const slider = document.getElementById('shinySlider');
+            const speedSlider = document.getElementById('speedSlider');
+            const warning = document.getElementById('speedWarning');
+            if (val === 'iloveclodsire') {
+                slider.disabled = false; slider.style.opacity = '1'; slider.style.cursor = 'pointer';
+                speedSlider.disabled = false; speedSlider.style.opacity = '1'; speedSlider.style.cursor = 'pointer';
+                warning.style.display = 'block';
+            } else {
+                slider.disabled = true; slider.style.opacity = '0.5'; slider.style.cursor = 'not-allowed'; slider.value = 1; updateShinySlider(1);
+                speedSlider.disabled = true; speedSlider.style.opacity = '0.5'; speedSlider.style.cursor = 'not-allowed'; speedSlider.value = 1; updateSpeedSlider(1);
+                warning.style.display = 'none';
+            }
+        }
 
-        // Encounter Variables
-        let encounterSeconds = 0;
-        let currentFinalChance = 0;
-        let currentPokemonName = "";
-        let currentLevel = 1; 
-        let isShiny = false;
-        let transitionPending = false;
-        let transitionDelayCounter = 0; 
-        
-        // NEW THROW LOGIC VARIABLES
-        let currentThrowCount = 0;
+        function checkPokedexAdmin(val) {
+            const controls = document.getElementById('pokedexAdminControls');
+            if (val === 'megaaltaria334') {
+                controls.style.display = 'flex';
+            } else {
+                controls.style.display = 'none';
+                unlockAllPokedex = false;
+                document.getElementById('unlockAllCheck').checked = false;
+                updatePokedexVisuals();
+            }
+        }
 
-        let endConfirmState = false;
-        let endConfirmTimeout = null; 
+        function toggleAdminBox(boxId) {
+            const box = document.getElementById(boxId);
+            if (box) {
+                box.classList.toggle('admin-minimized');
+                const btn = box.querySelector('.admin-minimize-btn');
+                if (box.classList.contains('admin-minimized')) {
+                    btn.innerText = "+";
+                } else {
+                    btn.innerText = "-";
+                }
+            }
+        }
 
-        const generationRanges = [
-            { start: 1, end: 151 }, { start: 152, end: 251 }, { start: 252, end: 386 },
-            { start: 387, end: 493 }, { start: 494, end: 649 }, { start: 650, end: 721 },
-            { start: 722, end: 809 }, { start: 810, end: 898 }
-        ];
+        function toggleUnlockAll() {
+            unlockAllPokedex = document.getElementById('unlockAllCheck').checked;
+            updatePokedexVisuals();
+        }
 
+        function resetPokedexData() {
+            if(confirm("Are you sure you want to reset all Pokédex data? This cannot be undone.")) {
+                globalCaughtHistory = Array.from({length: 10000}, () => []);
+                localStorage.setItem('pokeStudy_caughtHistory', JSON.stringify(globalCaughtHistory));
+                updatePokedexVisuals();
+                alert("Pokédex has been reset.");
+            }
+        }
+
+        /* ==========================================================================
+           SECTION 5: POKÉDEX FUNCTIONALITY
+           Fetching data, checking ownership, rendering grid and details.
+           ========================================================================== */
+        function userHasShiny(id) {
+            if (unlockAllPokedex) return true;
+            const list = globalCaughtHistory[id];
+            if (!list || list.length === 0) return false;
+            return list.some(entry => entry[1] === 1);
+        }
+
+        function checkFormCaught(id, slug, isShiny) {
+            if (unlockAllPokedex) return true;
+            const list = globalCaughtHistory[id];
+            if (!list) return false;
+            const shinyInt = isShiny ? 1 : 0;
+            return list.some(entry => entry[3] === slug && entry[1] === shinyInt);
+        }
+
+        function formatDisplayName(name) {
+            if (!name) return "";
+            return name.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('-');
+        }
+
+        function getSpriteUrl(slug, isShiny) {
+            const repo = isShiny ? POKESPRITE_SHINY : POKESPRITE_BASE;
+            if (slug.endsWith('-f') && slug !== 'nidoran-f') {
+                const base = slug.slice(0, -2);
+                if (isShiny) {
+                    return `https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/shiny/female/${base}.png`;
+                } else {
+                    return `https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/regular/female/${base}.png`;
+                }
+            }
+            return `${repo}${slug}.png`;
+        }
+
+        async function initPokedex() {
+            if (pokedexLoaded) return;
+            pokedexLoaded = true;
+
+            const container = document.getElementById('pokedexContentArea');
+            container.innerHTML = '<div style="text-align:center; margin-top: 50px;">Fetching 898 Pokémon...</div>';
+
+            try {
+                const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=898');
+                const data = await response.json();
+                const allPokemon = data.results;
+                container.innerHTML = ""; 
+
+                let currentGenIndex = 0;
+                let gridContainer = null;
+
+                // 1. STANDARD POKEMON LOOP
+                for (let i = 0; i < allPokemon.length; i++) {
+                    const id = i + 1;
+                    const pokeName = allPokemon[i].name;
+
+                    if (currentGenIndex < generationRanges.length) {
+                        const range = generationRanges[currentGenIndex];
+                        if (id === range.start) {
+                            const title = document.createElement('div');
+                            title.className = 'pokedex-header'; title.innerText = range.name; container.appendChild(title);
+                            const divider = document.createElement('div');
+                            divider.className = 'pokedex-divider'; container.appendChild(divider);
+                            gridContainer = document.createElement('div');
+                            gridContainer.className = 'pokedex-grid'; container.appendChild(gridContainer);
+                        }
+                        if (id === range.end) currentGenIndex++;
+                    }
+
+                    createPokedexButton(id, pokeName, gridContainer);
+                }
+
+                // 2. SECRET SECTION
+                const title = document.createElement('div');
+                title.className = 'pokedex-header'; title.innerText = "Secret"; container.appendChild(title);
+                const divider = document.createElement('div');
+                divider.className = 'pokedex-divider'; container.appendChild(divider);
+                const secretGrid = document.createElement('div');
+                secretGrid.className = 'pokedex-grid'; container.appendChild(secretGrid);
+
+                // Add Secrets manually
+                [9000, 9001].forEach(secretId => {
+                    createPokedexButton(secretId, SECRET_DATA[secretId].name, secretGrid, true);
+                });
+
+                updatePokedexVisuals();
+            } catch (e) {
+                container.innerHTML = "Error loading Pokédex.";
+                console.error(e);
+            }
+        }
+
+        function createPokedexButton(id, name, container, isSecret = false) {
+            let displaySlug = name;
+            // Handle variants for normal pokemon
+            if (!isSecret) {
+                if (VARIANT_MAP[id] && VARIANT_MAP[id].length > 0) displaySlug = VARIANT_MAP[id][0];
+            }
+            
+            let displayName = formatDisplayName(displaySlug);
+            let imageSlug = displaySlug;
+
+            const btn = document.createElement('div');
+            btn.className = 'pokedex-btn';
+            btn.id = `pokedex-btn-${id}`; 
+            
+            pokedexSearchMap[name.toLowerCase()] = `pokedex-btn-${id}`;
+            pokedexSearchMap[displayName.toLowerCase()] = `pokedex-btn-${id}`;
+            
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'pokedex-btn-title';
+            // Secrets don't show ID numbers
+            nameDiv.innerText = isSecret ? `${displayName}` : `#${id}\n${displayName}`;
+            btn.appendChild(nameDiv);
+
+            const img = document.createElement('img');
+            img.dataset.slug = imageSlug; 
+            img.dataset.baseName = displayName; 
+            img.dataset.id = id;
+            
+            // Initial State
+            img.src = UNOWN_Q_URL; 
+            img.style.opacity = "0.7"; 
+            if(isSecret) img.classList.add('secret-render');
+
+            img.onerror = function() { this.style.display='none'; };
+            
+            btn.onclick = () => { 
+                    if(unlockAllPokedex || (globalCaughtHistory[id] && globalCaughtHistory[id].length > 0)) {
+                        openPokemonDetail(id, displayName);
+                }
+            };
+            btn.appendChild(img);
+            if(container) container.appendChild(btn);
+        }
+
+        function updatePokedexVisuals() {
+            if (!pokedexLoaded) return;
+            const showShiny = document.getElementById('showShinyToggle').checked;
+
+            const allIds = [...Array(899).keys()].slice(1).concat([9000, 9001]);
+
+            allIds.forEach(id => {
+                const btn = document.getElementById(`pokedex-btn-${id}`);
+                if (!btn) return; 
+                
+                const img = btn.querySelector('img');
+                const isOwned = (globalCaughtHistory[id] && globalCaughtHistory[id].length > 0) || unlockAllPokedex;
+                const slug = img.dataset.slug;
+
+                if (isOwned) {
+                    const hasShiny = userHasShiny(id);
+                    const targetShiny = showShiny && hasShiny;
+                    
+                    if (SECRET_DATA[id]) {
+                        img.src = targetShiny ? SECRET_DATA[id].shinyPng : SECRET_DATA[id].basePng;
+                    } else {
+                        img.src = getSpriteUrl(slug, targetShiny);
+                    }
+
+                    img.style.opacity = "1";
+                    btn.style.backgroundColor = "rgba(255, 255, 255, 0.3)"; 
+                } else {
+                    img.src = UNOWN_Q_URL;
+                    img.style.opacity = "0.7";
+                    btn.style.backgroundColor = "#7f8c8d"; 
+                }
+            });
+        }
+
+        // Helper to determine Generation ID from Pokedex Number
+        function getGenerationId(id) {
+            for (let i = 0; i < generationRanges.length; i++) {
+                if (id >= generationRanges[i].start && id <= generationRanges[i].end) {
+                    return i + 1; // 1-based generation index
+                }
+            }
+            return 8; // Fallback
+        }
+
+        async function fetchFlavorText(id) {
+            if (SECRET_DATA[id]) return SECRET_DATA[id].desc;
+
+            if (pokedexFlavorCache[id]) return pokedexFlavorCache[id];
+            
+            const genId = getGenerationId(id);
+            const targetVersion = GEN_VERSION_MAP[genId] || "red"; 
+
+            try {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}/`);
+                const data = await res.json();
+                
+                let entry = data.flavor_text_entries.find(e => e.language.name === 'en' && e.version.name === targetVersion);
+                
+                if (!entry) {
+                    entry = data.flavor_text_entries.find(e => e.language.name === 'en');
+                }
+
+                // Sanitizes flavor text by removing control characters like newlines
+                const text = entry ? entry.flavor_text.replace(/[\n\f\r]/g, ' ') : "No entry data found.";
+                
+                pokedexFlavorCache[id] = text;
+                return text;
+            } catch (e) {
+                console.error("Flavor fetch error", e);
+                return "Could not load Pokédex entry.";
+            }
+        }
+
+        function openPokemonDetail(id, baseName) {
+            const btn = document.getElementById(`pokedex-btn-${id}`);
+            const img = btn.querySelector('img');
+            const baseSlug = img.dataset.slug;
+            
+            detailCycleList = [];
+            
+            if (SECRET_DATA[id]) {
+                detailCycleList.push({ slug: 'base', isShiny: false, label: '', caught: checkFormCaught(id, 'base', false) });
+                detailCycleList.push({ slug: 'base', isShiny: true, label: '', caught: checkFormCaught(id, 'base', true) });
+            } else {
+                let baseLabel = "";
+                if (BASE_LABEL_MAP[id]) baseLabel = `(${BASE_LABEL_MAP[id]})`;
+
+                // Base Form
+                detailCycleList.push({ slug: baseSlug, isShiny: false, label: baseLabel, caught: checkFormCaught(id, baseSlug, false) });
+                detailCycleList.push({ slug: baseSlug, isShiny: true, label: baseLabel, caught: checkFormCaught(id, baseSlug, true) });
+
+                // Variants
+                if (VARIANT_MAP[id]) {
+                    const variants = VARIANT_MAP[id];
+                    variants.forEach(vSlug => {
+                        if (vSlug === baseSlug) return; 
+                        let label = vSlug.replace(baseSlug, "").replace(/-/g, " ").trim();
+                        if(label) label = `(${formatDisplayName(label)})`;
+                        if (id === 849 && vSlug === 'toxtricity-low-key') label = "(Low Key)";
+                        if (id === 849 && vSlug === 'toxtricity-low-key-gmax') label = "(Low Key Gigantamax)";
+
+                        detailCycleList.push({ slug: vSlug, isShiny: false, label: label, caught: checkFormCaught(id, vSlug, false) });
+                        detailCycleList.push({ slug: vSlug, isShiny: true, label: label, caught: checkFormCaught(id, vSlug, true) });
+                    });
+                }
+            }
+
+            currentDetailIndex = 0; 
+            updateDetailView(id, baseName); 
+
+            // --- FETCH AND DISPLAY FLAVOR TEXT ---
+            const flavorBox = document.getElementById('detailFlavorText');
+            flavorBox.innerText = "Loading entry...";
+            fetchFlavorText(id).then(text => {
+                // Ensure we are still looking at the same pokemon before updating (simple check)
+                if (window.currentDetailId === id) {
+                    flavorBox.innerText = text;
+                }
+            });
+
+            const listContainer = document.getElementById('detailHistoryList');
+            listContainer.innerHTML = "";
+            const history = globalCaughtHistory[id] || [];
+            
+            history.forEach(catchData => {
+                const level = catchData[0];
+                const isShiny = catchData[1] === 1;
+                const ballIdx = catchData[2];
+                const slug = catchData[3];
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'history-item';
+                const headerLine = document.createElement('div');
+                headerLine.className = 'history-header-line';
+
+                const ballNames = ['Pokeball.png', 'Greatball.png', 'Ultraball.png', 'Masterball.png'];
+                const ballImg = document.createElement('img');
+                ballImg.src = ballNames[ballIdx];
+                ballImg.className = 'history-ball';
+
+                const titleText = document.createElement('span');
+                titleText.innerHTML = `Lv.${level} ${formatPokemonName(id >= 9000 ? SECRET_DATA[id].name : slug)} ${isShiny ? '<span style="color:#f1c40f;">★</span>' : ''}`;
+
+                headerLine.appendChild(ballImg);
+                headerLine.appendChild(titleText);
+
+                const gifRow = document.createElement('div');
+                gifRow.className = 'history-gif-row';
+                const gifImg = document.createElement('img');
+                
+                if (SECRET_DATA[id]) {
+                    gifImg.src = isShiny ? SECRET_DATA[id].shinyGif : SECRET_DATA[id].baseGif;
+                    gifImg.style.width = "auto";
+                    gifImg.style.maxHeight = "100px";
+                } else {
+                    let gifSlug = slug;
+                    if (slug.includes('mega-x')) gifSlug = slug.replace('mega-x', 'megax');
+                    if (slug.includes('mega-y')) gifSlug = slug.replace('mega-y', 'megay');
+                    if (slug.includes('oricorio-pom-pom')) gifSlug = slug.replace('oricorio-pom-pom', 'oricorio-pompom');
+                    
+                    const folder = isShiny ? 'ani-shiny' : 'ani';
+                    gifImg.src = `https://play.pokemonshowdown.com/sprites/${folder}/${gifSlug}.gif`;
+                }
+                
+                gifImg.className = 'history-gif';
+
+                gifRow.appendChild(gifImg);
+                itemDiv.appendChild(headerLine);
+                itemDiv.appendChild(gifRow);
+                listContainer.appendChild(itemDiv);
+            });
+
+            const gridView = document.getElementById('pokedex-view-grid');
+            const detailView = document.getElementById('pokedex-view-detail');
+            gridView.classList.remove('active-sub');
+            setTimeout(() => { detailView.classList.add('active-sub'); }, 50);
+        }
+
+        function cycleDetail(dir) {
+            currentDetailIndex += dir;
+            if (currentDetailIndex >= detailCycleList.length) currentDetailIndex = 0;
+            if (currentDetailIndex < 0) currentDetailIndex = detailCycleList.length - 1;
+            updateDetailView(window.currentDetailId, window.currentDetailBaseName);
+        }
+
+        function updateDetailView(id, baseName) {
+            window.currentDetailId = id;
+            window.currentDetailBaseName = baseName;
+            const data = detailCycleList[currentDetailIndex];
+            const detailImg = document.getElementById('detailImage');
+            const detailName = document.getElementById('detailName');
+            const formLabel = document.getElementById('detailFormLabel');
+
+            let nameHtml = `#${id < 9000 ? id : '???'} ${baseName}`;
+            if (data.isShiny) nameHtml += ' <span style="color:#f1c40f;">★</span>';
+            detailName.innerHTML = nameHtml;
+            formLabel.innerText = data.label;
+
+            if (data.caught || unlockAllPokedex) {
+                if (SECRET_DATA[id]) {
+                    detailImg.src = data.isShiny ? SECRET_DATA[id].shinyPng : SECRET_DATA[id].basePng;
+                    detailImg.classList.add('secret-render'); 
+                } else {
+                    detailImg.src = getSpriteUrl(data.slug, data.isShiny);
+                    detailImg.classList.remove('secret-render');
+                }
+            } else {
+                detailImg.src = UNOWN_Q_URL;
+                detailImg.classList.remove('secret-render');
+            }
+        }
+
+        function closePokemonDetail() {
+            const gridView = document.getElementById('pokedex-view-grid');
+            const detailView = document.getElementById('pokedex-view-detail');
+            detailView.classList.remove('active-sub');
+            setTimeout(() => { gridView.classList.add('active-sub'); }, 50);
+        }
+
+        function searchPokedex(query) {
+            query = query.toLowerCase().trim();
+            const highlighted = document.querySelectorAll('.highlight-pokemon');
+            highlighted.forEach(el => el.classList.remove('highlight-pokemon'));
+
+            if (!query) return;
+
+            let targetId = pokedexSearchMap[query];
+            if (!targetId) {
+                const keys = Object.keys(pokedexSearchMap);
+                const match = keys.find(k => k.includes(query));
+                if (match) targetId = pokedexSearchMap[match];
+            }
+
+            if (targetId) {
+                const element = document.getElementById(targetId);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    element.classList.add('highlight-pokemon');
+                }
+            }
+        }
+
+        /* ==========================================================================
+           SECTION 6: GAME SIMULATION LOGIC
+           Core engine for encounters, catch mechanics, and loop management.
+           ========================================================================== */
         function getValidIdPool() {
             let pool = [];
             for (let i = 0; i < 8; i++) {
@@ -968,113 +1687,63 @@
             return pool;
         }
 
-        // --- CONTROL FUNCTIONS ---
         function startGameTransition() {
             validPokemonIds = getValidIdPool();
             switchView('view-game');
             gameSecondsRemaining = configMinutes * 60; 
             isPaused = false;
-            
-            // Clear caught list for new session
             caughtPokemonList = [];
-            document.getElementById('caughtListContainer').innerHTML = '<div style="font-weight: bold; margin-bottom: 10px;">CAUGHT POKEMON:</div>';
-
+            document.getElementById('caughtListContainer').innerHTML = '<div style="font-weight: bold; margin-bottom: 10px;">CAUGHT POKÉMON:</div>';
             endConfirmState = false;
             if(endConfirmTimeout) clearTimeout(endConfirmTimeout);
             const endBtn = document.getElementById('btnEnd');
-            endBtn.innerText = "END SESSION";
-            endBtn.style.color = "#e74c3c";
-
-            document.getElementById('btnPause').innerText = "PAUSE";
-            document.getElementById('btnPause').style.color = "#f1c40f";
+            endBtn.innerText = "END SESSION"; endBtn.style.color = "#e74c3c";
+            document.getElementById('btnPause').innerText = "PAUSE"; document.getElementById('btnPause').style.color = "#f1c40f";
             updateGameTimerDisplay();
-            
             transitionDelayCounter = 0;
-            isFirstEncounter = true; // Reset Mystery Guest Flag
-            
+            isFirstEncounter = true; 
             runGameCycle(); 
             if (gameInterval) clearInterval(gameInterval);
-            
-            // Start loop with current Speed setting
             gameInterval = setInterval(gameTick, gameTickIntervalTime);
         }
 
-        function stopGameAndReturn() {
-            clearInterval(gameInterval);
-            clearInterval(typewriterInterval); 
-            switchView('view-home');
-        }
-
-        // BACK BUTTON
         function stopGameAndToSettings() {
-            clearInterval(gameInterval);
-            clearInterval(typewriterInterval); 
-            switchView('view-external-1');
+            clearInterval(gameInterval); clearInterval(typewriterInterval); switchView('view-external-1');
         }
 
         function handleEndButton() {
             const btn = document.getElementById('btnEnd');
             if (!endConfirmState) {
-                btn.innerText = "CONFIRM END";
-                btn.style.color = "#c0392b"; 
-                endConfirmState = true;
-                
+                btn.innerText = "CONFIRM END"; btn.style.color = "#c0392b"; endConfirmState = true;
                 if(endConfirmTimeout) clearTimeout(endConfirmTimeout);
-                
                 endConfirmTimeout = setTimeout(() => {
-                    if (endConfirmState) { 
-                        endConfirmState = false;
-                        btn.innerText = "END SESSION";
-                        btn.style.color = "#e74c3c";
-                    }
+                    if (endConfirmState) { endConfirmState = false; btn.innerText = "END SESSION"; btn.style.color = "#e74c3c"; }
                 }, 3000);
-            } else {
-                goToEndPage();
-            }
+            } else { goToEndPage(); }
         }
 
         function goToEndPage() {
-            clearInterval(gameInterval);
-            clearInterval(typewriterInterval); 
-            if(endConfirmTimeout) clearTimeout(endConfirmTimeout); 
-
-            // POPULATE END PAGE LIST
+            clearInterval(gameInterval); clearInterval(typewriterInterval); if(endConfirmTimeout) clearTimeout(endConfirmTimeout); 
             const endList = document.getElementById('endSessionList');
             endList.innerHTML = '<div style="text-align: center; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px;">SESSION CATCHES</div>';
-
             if (caughtPokemonList.length === 0) {
-                endList.innerHTML += '<div style="text-align: center; margin-top: 20px;">No Pokemon Caught...</div>';
+                endList.innerHTML += '<div style="text-align: center; margin-top: 20px;">No Pokémon Caught...</div>';
             } else {
                 caughtPokemonList.forEach(p => {
                     const item = document.createElement('div');
-                    item.style.display = 'flex'; // Need flex to align icon and text
-                    item.style.alignItems = 'center';
-                    item.style.marginBottom = '10px';
-
-                    // 1. Create Ball Icon (Matching the style of the sidebar list)
+                    item.style.display = 'flex'; item.style.alignItems = 'center'; item.style.marginBottom = '10px';
                     const ballImg = document.createElement('img');
                     const ballNames = ['Pokeball.png', 'Greatball.png', 'Ultraball.png', 'Masterball.png'];
                     ballImg.src = ballNames[p.ballIdx];
-                    ballImg.style.width = '3em'; 
-                    ballImg.style.height = '3em';
-                    ballImg.style.marginRight = '8px';
-                    ballImg.style.imageRendering = 'pixelated';
-
-                    // 2. Create Text
+                    ballImg.style.width = '3em'; ballImg.style.height = '3em'; ballImg.style.marginRight = '8px'; ballImg.style.imageRendering = 'pixelated';
                     const textSpan = document.createElement('span');
                     let displayString = `Lv. ${p.level} ${p.name}`;
-                    if (p.name.includes('★')) {
-                        textSpan.innerHTML = displayString.replace('★', '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>');
-                    } else {
-                        textSpan.innerText = displayString;
-                    }
-
-                    item.appendChild(ballImg);
-                    item.appendChild(textSpan);
+                    if (p.name.includes('★')) { textSpan.innerHTML = displayString.replace('★', '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>'); } 
+                    else { textSpan.innerText = displayString; }
+                    item.appendChild(ballImg); item.appendChild(textSpan);
                     endList.appendChild(item);
                 });
             }
-
             switchView('view-end');
         }
 
@@ -1085,100 +1754,56 @@
             btn.style.color = isPaused ? "#2ecc71" : "#f1c40f";
         }
 
-        // --- REVISED GAME TICK WITH NEW LOGIC ---
+        // The main game loop tick
         function gameTick() {
             if (isPaused || isLoading) return;
-
-            // 1. Session Timer Logic
-            if (gameSecondsRemaining > 0) {
-                gameSecondsRemaining--; 
-                updateGameTimerDisplay();
-            } else {
-                goToEndPage();
-                return;
-            }
-
-            // 2. Transition Delay Logic (Post-Catch or Post-Flee)
-            if (transitionPending) {
-                if (transitionDelayCounter > 0) {
-                    transitionDelayCounter--; 
-                    return; 
-                } else {
-                    runGameCycle();
-                    return;
-                }
-            }
-
-            // 3. Encounter Logic
+            if (gameSecondsRemaining > 0) { gameSecondsRemaining--; updateGameTimerDisplay(); } else { goToEndPage(); return; }
+            if (transitionPending) { if (transitionDelayCounter > 0) { transitionDelayCounter--; return; } else { runGameCycle(); return; } }
             encounterSeconds++;
-
-            // Wait 2 seconds (Tick 0, Tick 1) before doing anything
             if (encounterSeconds < 2) return;
-
-            // Throw Logic: Every 2 ticks (even seconds)
             if (encounterSeconds % 2 === 0) {
                 let displayName = currentPokemonName + (isShiny ? " ★" : "");
-                
-                // Roll for Catch
                 let caught = Math.random() < currentFinalChance;
-
                 if (caught) {
                     startTypewriter(`Gotcha! The wild ${displayName} was caught!`);
-                    transitionPending = true;
-                    transitionDelayCounter = 4; // UPDATED: Wait 4s after catch
+                    transitionPending = true; transitionDelayCounter = 4; 
                     addCaughtPokemon(displayName, currentLevel, currentBallIndex);
                 } else {
                     currentThrowCount++;
                     startTypewriter(`Oh no! The wild ${displayName} broke free!`);
-                    
-                    // Check Fail Condition
-                    // If NOT unlimited AND we hit max throws -> Flee
                     if (!throwUntilCaught && currentThrowCount >= maxBallsToThrow) {
-                        // Delay the flee message slightly
-                        setTimeout(() => {
-                             if(!isPaused && !isLoading && !transitionPending) {
-                                startTypewriter(`Wild ${displayName} fled!`);
-                                transitionPending = true;
-                                transitionDelayCounter = 4; // UPDATED: Wait 4s after flee
-                             }
-                        }, gameTickIntervalTime); // Show "Fled" after 1 tick
+                        setTimeout(() => { if(!isPaused && !isLoading && !transitionPending) { startTypewriter(`Wild ${displayName} fled!`); transitionPending = true; transitionDelayCounter = 4; } }, gameTickIntervalTime);
                     }
                 }
             }
         }
 
-        function addCaughtPokemon(name, level, ballIdx) {
-            caughtPokemonList.push({name, level, ballIdx});
+        function addCaughtPokemon(displayName, level, ballIdx) {
+            caughtPokemonList.push({name: displayName, level, ballIdx});
             const container = document.getElementById('caughtListContainer');
             const item = document.createElement('div');
-            item.style.color = 'black'; 
-            item.style.display = 'flex'; 
-            item.style.alignItems = 'center';
-            
-            // Create Ball Icon
+            item.style.color = 'black'; item.style.display = 'flex'; item.style.alignItems = 'center';
             const ballImg = document.createElement('img');
             const ballNames = ['Pokeball.png', 'Greatball.png', 'Ultraball.png', 'Masterball.png'];
             ballImg.src = ballNames[ballIdx];
-            ballImg.style.width = '3em'; 
-            ballImg.style.height = '3em';
-            ballImg.style.marginRight = '8px';
-            ballImg.style.imageRendering = 'pixelated';
-            
-            // Create Text Span
+            ballImg.style.width = '3em'; ballImg.style.height = '3em'; ballImg.style.marginRight = '8px'; ballImg.style.imageRendering = 'pixelated';
             const textSpan = document.createElement('span');
-            let displayString = `Lv. ${level} ${name}`;
-            
-            if (name.includes('★')) {
-                textSpan.innerHTML = displayString.replace('★', '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>');
-            } else {
-                textSpan.innerText = displayString;
+            let displayString = `Lv. ${level} ${displayName}`;
+            if (displayName.includes('★')) { textSpan.innerHTML = displayString.replace('★', '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>'); } 
+            else { textSpan.innerText = displayString; }
+            item.appendChild(ballImg); item.appendChild(textSpan);
+            container.appendChild(item); container.scrollTop = container.scrollHeight;
+
+            if (currentPokemonId > 0) {
+                if (!Array.isArray(globalCaughtHistory[currentPokemonId])) {
+                    globalCaughtHistory[currentPokemonId] = [];
+                }
+                const shinyInt = isShiny ? 1 : 0;
+                const formStr = currentSpriteSlug;
+                const newEntry = [level, shinyInt, ballIdx, formStr];
+                globalCaughtHistory[currentPokemonId].push(newEntry);
+                localStorage.setItem('pokeStudy_caughtHistory', JSON.stringify(globalCaughtHistory));
             }
-            
-            item.appendChild(ballImg);
-            item.appendChild(textSpan);
-            
-            container.appendChild(item);
-            container.scrollTop = container.scrollHeight;
         }
 
         function updateGameTimerDisplay() {
@@ -1190,24 +1815,14 @@
         function startTypewriter(text) {
             const textBox = document.getElementById('gameTextBox');
             textBox.innerHTML = ""; 
-            
             if (typewriterInterval) clearInterval(typewriterInterval);
-            
-            // SPEED FIX: DYNAMIC CALCULATION
             const timeWindow = 2 * gameTickIntervalTime;
             const targetDuration = timeWindow * 0.75;
             const charDelay = Math.max(1, Math.floor(targetDuration / text.length));
             let i = 0;
-            
             typewriterInterval = setInterval(() => {
                 const char = text.charAt(i);
-                
-                if (char === '★') {
-                    textBox.innerHTML += '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>';
-                } else {
-                    textBox.innerHTML += char;
-                }
-                
+                if (char === '★') { textBox.innerHTML += '<span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>'; } else { textBox.innerHTML += char; }
                 i++;
                 if (i >= text.length) clearInterval(typewriterInterval);
             }, charDelay);
@@ -1216,40 +1831,34 @@
         function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
         function formatPokemonName(slug) {
-            const parts = slug.split('-');
+            if (!slug) return "Unknown";
+            let display = slug;
+            if (display.includes('mega-x')) display = display.replace('mega-x', 'mega (X)');
+            else if (display.includes('mega-y')) display = display.replace('mega-y', 'mega (Y)');
+            else if (display.endsWith('-mega')) display = "Mega " + display.replace('-mega', '');
+            
+            const parts = display.split('-');
             const base = capitalize(parts[0]);
-
-            if (parts.includes('mega')) return `Mega ${base}`;
-            if (parts.includes('primal')) return `Primal ${base}`;
+            
             if (parts.includes('alola')) return `Alolan ${base}`;
             if (parts.includes('galar')) return `Galarian ${base}`;
             if (parts.includes('hisui')) return `Hisuian ${base}`;
             if (parts.includes('paldea')) return `Paldean ${base}`;
             if (parts.includes('gmax')) return `Gigantamax ${base}`;
-            if (parts.includes('eternamax')) return `Eternamax ${base}`;
             
-            if (slug.includes('pompom')) return `Oricorio Pom Pom`;
-            if (slug.includes('duskmane')) return `Necrozma Dusk Mane`;
-            if (slug.includes('dawnwings')) return `Necrozma Dawn Wings`;
+            if (slug.startsWith('tapu')) return capitalize(parts[0]) + " " + capitalize(parts[1]);
+            if (slug.startsWith('type-null')) return "Type: Null";
+            if (slug.includes('mime') && slug.includes('mr')) return "Mr. Mime";
+            if (slug.includes('rime') && slug.includes('mr')) return "Mr. Rime";
 
-            if (slug.startsWith('alcremie-') && !slug.includes('gmax')) {
-                 return slug.split('-').map(capitalize).join(' ');
-            }
-
-            return base;
+            return display.split('-').map(capitalize).join(' ');
         }
 
+        // Main Encounter Generation Logic
         async function runGameCycle() {
-            // 1. Lock game loop
             isLoading = true;
-
             if (typewriterInterval) clearInterval(typewriterInterval);
-
-            encounterSeconds = 0;
-            currentThrowCount = 0; // Reset throws for new encounter
-            transitionPending = false;
-            transitionDelayCounter = 0;
-
+            encounterSeconds = 0; currentThrowCount = 0; transitionPending = false; transitionDelayCounter = 0;
             const imgElement = document.getElementById('pokemonSprite');
             const textBox = document.getElementById('gameTextBox');
             const statusText = document.getElementById('statusRollText');
@@ -1257,200 +1866,142 @@
             const selector = document.getElementById('ballSelector');
             const healthBarUI = document.getElementById('healthBarUI');
 
-            imgElement.style.display = 'none';
-            textBox.innerHTML = "Searching for Pokemon..."; 
-            statusText.style.opacity = 0;
-            catchDisplay.innerText = "";
-            selector.style.display = 'none';
-            healthBarUI.style.display = 'none'; 
+            imgElement.style.display = 'none'; textBox.innerHTML = "Searching for Pokémon..."; 
+            statusText.style.opacity = 0; catchDisplay.innerText = "";
+            selector.style.display = 'none'; healthBarUI.style.display = 'none'; 
             document.querySelectorAll('.poke-icon').forEach(icon => icon.classList.remove('active'));
 
-            // CHECK MYSTERY GUEST CONDITION
             const now = new Date();
-            const isMidnight = (now.getHours() === 0 && now.getMinutes() === 0);
+            const h = now.getHours();
+            const m = now.getMinutes();
+            
+            // Check for Secrets (Easter Eggs)
+            const isMidnight = (h === 0 && m === 0);
+            const isKirbyTime = (h === 22 && m === 31);
+            let secretId = 0;
 
-            if (isFirstEncounter && isMidnight) {
-                // --- MISSINGNO LOGIC ---
-                isFirstEncounter = false;
+            if (isFirstEncounter && (isMidnight || isKirbyTime)) {
                 
-                currentPokemonName = "MissingNo.";
-                isShiny = false; // or random, but prompt says use missingno.png for both
+                // Determine which secret
+                if (isMidnight) secretId = 9000; // MissingNo
+                else if (isKirbyTime) secretId = 9001; // Kirby
+
+                const secret = SECRET_DATA[secretId];
+                isFirstEncounter = false; 
+                currentPokemonName = secret.name;
+                currentPokemonId = secretId;
                 
-                // Force Image
-                imgElement.src = "missingno.png";
+                // Determine Shiny Chance for Secret (Standard Roll)
+                const shinyRoll = Math.floor(Math.random() * shinyOdds) + 1;
+                isShiny = (shinyRoll === 1);
+
+                // Setup Display
+                imgElement.src = isShiny ? secret.shinyGif : secret.baseGif;
                 imgElement.style.display = 'block';
-
-                // Setup Dummy Stats
-                currentLevel = Math.floor(Math.random() * 100) + 1;
-                const hpMax = 33; // Arbitrary
-                let hpCurrent = hpMax; 
-                let hpColor = "#2ecc71"; 
-                let barWidth = "100%"; 
-                let barColor = "#2ecc71";
-
-                // Setup UI
-                const hbName = document.getElementById('hbName');
-                hbName.innerHTML = currentPokemonName;
-                document.getElementById('hbLevel').innerText = "Lv. " + currentLevel;
-                document.getElementById('hbFill').style.width = barWidth;
-                document.getElementById('hbFill').style.backgroundColor = barColor;
-                healthBarUI.style.display = 'block';
-
-                // Status (None)
-                statusText.innerText = "No Status"; statusText.style.color = "#ecf0f1"; statusText.style.opacity = 1;
-
-                // Balls (Random logic similar to normal)
-                let bonusBall;
-                const rBall = Math.random();
-                if (rBall < 0.50) { bonusBall = 1.0; currentBallIndex = 0; } 
-                else if (rBall < 0.80) { bonusBall = 1.5; currentBallIndex = 1; } 
-                else if (rBall < 0.95) { bonusBall = 2.0; currentBallIndex = 2; } 
-                else { bonusBall = 255; currentBallIndex = 3; } 
-
-                const ballIcon = document.getElementById(`ball-${currentBallIndex}`);
-                if (ballIcon) {
-                    ballIcon.classList.add('active');
-                    selector.style.display = 'block';
-                    selector.style.top = (ballIcon.offsetTop + 6) + 'px'; 
+                if(secretId === 9001) {
+                    imgElement.style.maxHeight = "40vh"; // Specific tweak for Kirby gif size
+                } else {
+                     imgElement.style.maxHeight = "50vh";
                 }
 
-                // FORCE 100% CATCH
-                currentFinalChance = 1.0;
-                catchDisplay.innerText = `Catch Chance: 100.000%`;
-
-                startTypewriter(`Wild MissingNo. appeared!`);
+                currentSpriteSlug = "base"; // Simple slug for history
                 
-                isLoading = false;
-                return; // SKIP REST OF FUNCTION
+                currentLevel = Math.floor(Math.random() * 100) + 1;
+                document.getElementById('hbName').innerHTML = currentPokemonName + (isShiny ? ' <span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>' : '');
+                document.getElementById('hbLevel').innerText = "Lv. " + currentLevel;
+                document.getElementById('hbFill').style.width = "100%";
+                document.getElementById('hbFill').style.backgroundColor = "#2ecc71";
+                healthBarUI.style.display = 'block';
+                
+                statusText.innerText = "No Status"; statusText.style.color = "#ecf0f1"; statusText.style.opacity = 1;
+                currentBallIndex = 3; 
+                const ballIcon = document.getElementById(`ball-${currentBallIndex}`);
+                if (ballIcon) { ballIcon.classList.add('active'); selector.style.display = 'block'; selector.style.top = (ballIcon.offsetTop + 6) + 'px'; }
+                
+                currentFinalChance = 1.0; 
+                catchDisplay.innerText = `Catch Chance: 100.000%`;
+                
+                startTypewriter(secretId === 9000 ? `Wild MissingNo. appeared!` : `A strange guest appeared!`);
+                isLoading = false; return;
             }
 
-            // --- NORMAL LOGIC IF NOT MISSINGNO ---
-            isFirstEncounter = false; // Ensure flag is off
-
+            isFirstEncounter = false; 
             const randomIndex = Math.floor(Math.random() * validPokemonIds.length);
-            const randomId = validPokemonIds[randomIndex];
+            currentPokemonId = validPokemonIds[randomIndex];
+            const randomId = currentPokemonId;
 
             try {
-                const [pokemonRes, speciesRes] = await Promise.all([
-                    fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`),
-                    fetch(`https://pokeapi.co/api/v2/pokemon-species/${randomId}`)
-                ]);
+                const [pokemonRes, speciesRes] = await Promise.all([ fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`), fetch(`https://pokeapi.co/api/v2/pokemon-species/${randomId}`) ]);
                 const pokeData = await pokemonRes.json();
                 const speciesData = await speciesRes.json();
-
-                let apiName = pokeData.name;
-                let spriteSlug = apiName;
-
-                if (VARIANT_MAP[randomId]) {
-                    const variants = VARIANT_MAP[randomId];
-                    spriteSlug = variants[Math.floor(Math.random() * variants.length)];
-                } else if (FIX_MAP[randomId]) {
-                    spriteSlug = FIX_MAP[randomId];
-                }
-
+                let apiName = pokeData.name; let spriteSlug = apiName;
+                if (VARIANT_MAP[randomId]) { const variants = VARIANT_MAP[randomId]; spriteSlug = variants[Math.floor(Math.random() * variants.length)]; } else if (FIX_MAP[randomId]) { spriteSlug = FIX_MAP[randomId]; }
+                
+                currentSpriteSlug = spriteSlug; 
                 currentPokemonName = formatPokemonName(spriteSlug);
-
+                
                 const hpMax = pokeData.stats[0].base_stat; 
                 const catchRate = speciesData.capture_rate;
-
                 const shinyRoll = Math.floor(Math.random() * shinyOdds) + 1;
                 isShiny = (shinyRoll === 1);
                 
+                let gifSlug = spriteSlug;
+                if (gifSlug.includes('mega-x')) gifSlug = gifSlug.replace('mega-x', 'megax');
+                if (gifSlug.includes('mega-y')) gifSlug = gifSlug.replace('mega-y', 'megay');
+                if (gifSlug.includes('oricorio-pom-pom')) gifSlug = gifSlug.replace('oricorio-pom-pom', 'oricorio-pompom');
+                
                 const folder = isShiny ? 'ani-shiny' : 'ani';
-
-                imgElement.src = `https://play.pokemonshowdown.com/sprites/${folder}/${spriteSlug}.gif`;
+                imgElement.src = `https://play.pokemonshowdown.com/sprites/${folder}/${gifSlug}.gif`;
                 imgElement.style.display = 'block';
-
+                imgElement.style.maxHeight = ""; // Reset height tweak from secrets
+                
                 currentLevel = Math.floor(Math.random() * 100) + 1;
-
+                
                 let hpCurrent, hpColor, barWidth, barColor;
                 const rHp = Math.random();
-                if (rHp < 0.60) { 
-                    hpCurrent = hpMax; hpColor = "#2ecc71"; 
-                    barWidth = "100%"; barColor = "#2ecc71"; 
-                } 
-                else if (rHp < 0.90) { 
-                    hpCurrent = hpMax / 2; hpColor = "#f1c40f"; 
-                    barWidth = "50%"; barColor = "#f1c40f"; 
-                } 
-                else { 
-                    hpCurrent = 1; hpColor = "#e74c3c"; 
-                    barWidth = "5%"; barColor = "#e74c3c"; 
-                } 
-
+                if (rHp < 0.60) { hpCurrent = hpMax; hpColor = "#2ecc71"; barWidth = "100%"; barColor = "#2ecc71"; } else if (rHp < 0.90) { hpCurrent = hpMax / 2; hpColor = "#f1c40f"; barWidth = "50%"; barColor = "#f1c40f"; } else { hpCurrent = 1; hpColor = "#e74c3c"; barWidth = "5%"; barColor = "#e74c3c"; } 
+                
                 const hbName = document.getElementById('hbName');
                 hbName.innerHTML = currentPokemonName;
-                if (isShiny) {
-                    hbName.innerHTML += ' <span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>';
-                }
-
+                if (isShiny) { hbName.innerHTML += ' <span style="color: #f1c40f; text-shadow: 1px 1px 0 #000;">★</span>'; }
                 document.getElementById('hbLevel').innerText = "Lv. " + currentLevel;
                 document.getElementById('hbFill').style.width = barWidth;
                 document.getElementById('hbFill').style.backgroundColor = barColor;
                 healthBarUI.style.display = 'block'; 
-
-                let bonusBall;
-                const rBall = Math.random();
-                if (rBall < 0.50) { bonusBall = 1.0; currentBallIndex = 0; } 
-                else if (rBall < 0.80) { bonusBall = 1.5; currentBallIndex = 1; } 
-                else if (rBall < 0.95) { bonusBall = 2.0; currentBallIndex = 2; } 
-                else { bonusBall = 255; currentBallIndex = 3; } 
-
-                let bonusStatus, statusString, statusColor;
-                const rStatus = Math.random();
-                if (rStatus < 0.50) { bonusStatus = 1; statusString = "No Status"; statusColor = "#ecf0f1"; }
-                else if (rStatus < 0.65) { bonusStatus = 1.5; statusString = "Paralyzed"; statusColor = "#f1c40f"; }
-                else if (rStatus < 0.80) { bonusStatus = 1.5; statusString = "Poisoned"; statusColor = "#9b59b6"; }
-                else if (rStatus < 0.95) { bonusStatus = 1.5; statusString = "Burned"; statusColor = "#e67e22"; }
-                else if (rStatus < 0.975) { bonusStatus = 2.5; statusString = "Frozen!"; statusColor = "#3498db"; }
-                else { bonusStatus = 2.5; statusString = "Asleep!"; statusColor = "#95a5a6"; }
-
+                
+                let bonusBall; const rBall = Math.random();
+                if (rBall < 0.50) { bonusBall = 1.0; currentBallIndex = 0; } else if (rBall < 0.80) { bonusBall = 1.5; currentBallIndex = 1; } else if (rBall < 0.95) { bonusBall = 2.0; currentBallIndex = 2; } else { bonusBall = 255; currentBallIndex = 3; } 
+                
+                let bonusStatus, statusString, statusColor; const rStatus = Math.random();
+                if (rStatus < 0.50) { bonusStatus = 1; statusString = "No Status"; statusColor = "#ecf0f1"; } else if (rStatus < 0.65) { bonusStatus = 1.5; statusString = "Paralyzed"; statusColor = "#f1c40f"; } else if (rStatus < 0.80) { bonusStatus = 1.5; statusString = "Poisoned"; statusColor = "#9b59b6"; } else if (rStatus < 0.95) { bonusStatus = 1.5; statusString = "Burned"; statusColor = "#e67e22"; } else if (rStatus < 0.975) { bonusStatus = 2.5; statusString = "Frozen!"; statusColor = "#3498db"; } else { bonusStatus = 2.5; statusString = "Asleep!"; statusColor = "#95a5a6"; }
                 statusText.innerText = statusString; statusText.style.color = statusColor; statusText.style.opacity = 1;
-
+                
                 const ballIcon = document.getElementById(`ball-${currentBallIndex}`);
-                if (ballIcon) {
-                    ballIcon.classList.add('active');
-                    selector.style.display = 'block';
-                    selector.style.top = (ballIcon.offsetTop + 6) + 'px'; 
-                }
-
+                if (ballIcon) { ballIcon.classList.add('active'); selector.style.display = 'block'; selector.style.top = (ballIcon.offsetTop + 6) + 'px'; }
+                
+                // Gen 8 Catch Rate Calculation
                 const bonusLevel = Math.max((30 - currentLevel) / 10, 1);
-
-                if (bonusBall === 255) {
-                    currentFinalChance = 1.0; 
-                } else {
-                    const a = ((3 * hpMax - 2 * hpCurrent) / (3 * hpMax)) * catchRate * bonusBall * bonusStatus * bonusLevel;
-                    // GEN 8 FORMULA
-                    if (a >= 255) {
-                        currentFinalChance = 1.0;
-                    } else {
-                        const b = Math.floor(65536 / Math.pow(255 / a, 0.1875));
-                        currentFinalChance = Math.pow(b / 65536, 4);
-                    }
-                }
-
+                if (bonusBall === 255) { currentFinalChance = 1.0; } else { const a = ((3 * hpMax - 2 * hpCurrent) / (3 * hpMax)) * catchRate * bonusBall * bonusStatus * bonusLevel; if (a >= 255) { currentFinalChance = 1.0; } else { const b = Math.floor(65536 / Math.pow(255 / a, 0.1875)); currentFinalChance = Math.pow(b / 65536, 4); } }
                 catchDisplay.innerText = `Catch Chance: ${(currentFinalChance * 100).toFixed(3)}%`;
-
+                
                 let displayName = currentPokemonName + (isShiny ? " ★" : "");
                 startTypewriter(`Wild ${displayName} appeared!`);
-
             } catch (error) {
-                console.log("Error", error);
-                runGameCycle(); 
-                return;
+                console.log("Error", error); runGameCycle(); return;
             }
-
-            // Unlock game loop
             isLoading = false; 
         }
         
         document.getElementById('pokemonSprite').onerror = function() { this.style.display = 'none'; };
 
+        /* ==========================================================================
+           SECTION 7: APP INITIALIZATION
+           Bootstrapping data from storage and initializing UI components.
+           ========================================================================== */
         window.onload = function() {
             if(localStorage.getItem('mySavedTimer')) { configMinutes = parseInt(localStorage.getItem('mySavedTimer')); updateConfigDisplay(); }
-            setupChecklist(); initShinySlider(); loadBallSettings(); updateMainClock();
+            setupChecklist(); initShinySlider(); loadBallSettings(); updateMainClock(); initPokedex();
         };
     </script>
 </body>
-
 </html>
